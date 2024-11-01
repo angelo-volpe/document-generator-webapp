@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Documents</title>
+</head>
+<body>
+    <h1>Documents</h1>
+    <ul>
+        {% for document in documents %}
+            <li><a href="{% url 'documentapp:document_detail' document.id %}">{{ document.name }}</a></li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'documentapp:add_document' %}">
+        <button>Add New Document</button>
+    </a>
+</body>
+</html>

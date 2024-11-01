@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document Details</title>
+</head>
+<body>
+    <h1>Document Details</h1>
+    <p><b>Document Name:</b> {{ document.name }} </p>
+    <p><b>Image</b></p>
+    <img src="{{ document.image.url }}" style="width:200px; height:auto;">
+    <a href="{% url 'documentapp:document_list' %}">Back to Document List</a>
+</body>
+</html>
