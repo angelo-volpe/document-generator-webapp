@@ -8,7 +8,6 @@ urlpatterns = [
     path("new/", views.add_document, name='add_document'),
     path('delete/<int:document_id>/', views.delete_document, name='delete_document'),
     path('delete/box/<int:box_id>/', views.delete_box, name='delete_box'),
-    # TODO pass document id in the url
     path('save_box/', views.save_box, name='save_box'),
     path('box/<int:document_id>', views.get_boxes, name="get_boxes"),
 ]

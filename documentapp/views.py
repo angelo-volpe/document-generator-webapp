@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
-from django.core import serializers
 
 from .models import Document, BoxCoordinate, BoxCoordinateSerializer
 from .forms import DocumentForm
@@ -16,7 +15,7 @@ def add_document(request):
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('documentapp:document_list')  # Redirect to the item list page
+            return redirect('documentapp:document_list')
     else:
         form = DocumentForm()
     return render(request, 'documentapp/add_document.html', {'form': form})
