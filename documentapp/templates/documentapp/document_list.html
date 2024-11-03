@@ -8,7 +8,13 @@
     <h1>Documents</h1>
     <ul>
         {% for document in documents %}
+            <!-- Document Name -->
             <li><a href="{% url 'documentapp:document_detail' document.id %}">{{ document.name }}</a></li>
+            <!-- Delete button -->
+            <form action="{% url 'documentapp:delete_document' document.id %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="Delete">Delete Document</button>
+            </form>
         {% endfor %}
     </ul>
     <a href="{% url 'documentapp:add_document' %}">
