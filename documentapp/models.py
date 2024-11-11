@@ -13,10 +13,14 @@ class Document(models.Model):
 class BoxCoordinate(models.Model):
     document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='box_coordinates')
     name = models.CharField(max_length=100)
+    is_alphabetic = models.BooleanField(default=False)
+    is_numeric = models.BooleanField(default=False)
+    mean_lenght = models.IntegerField(default=0)
     x1 = models.IntegerField()
     y1 = models.IntegerField()
     x2 = models.IntegerField()
     y2 = models.IntegerField()
+
 
     def __str__(self):
         return f"Box for {self.document.name} with name: {self.name} at ({self.x1}, {self.y1}), ({self.x2}, {self.y2})"

@@ -1,0 +1,28 @@
+.accordion-item {
+    width: 100%;
+}
+
+.accordion-trigger {
+    width: 100%;
+    display: block;
+    background-color: rgb(250, 250, 250);
+    color: rgb(0, 0, 0);
+    padding: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    text-align: left;
+    border: none;
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.accordion-item:not(:first-of-type) .accordion-trigger {
+    border-top: 3px solid #eaeaea;
+}
+
+.accordion-content {
+    margin: 24px;
+  }

@@ -1,8 +1,8 @@
 let startX, startY, endX, endY;
 const documentContainer = document.getElementById('document-container')
-const box = documentContainer.querySelector('.bounding-box');
+const box = document.getElementById('box');
 const documentId = documentContainer.dataset.documentId;
-const boxList = document.getElementById(`box-coordinates-${documentId}`);
+const boxList = document.getElementById(`box-list-${documentId}`);
 
 
 documentContainer.addEventListener('mousedown', (event) => {
@@ -38,8 +38,7 @@ function getCSRFToken() {
 
 
 function addBox(x1, y1, x2, y2) {
-    const newBox = document.createElement('li');
-    const form = document.createElement('form');
+    const newBoxForm = document.createElement('form');
 
     const input_name = document.createElement('input');
     input_name.type = 'text';
@@ -52,12 +51,10 @@ function addBox(x1, y1, x2, y2) {
     saveButton.onclick = () => saveBox(input_name, x1, y1, x2, y2);
 
     // Add input and button to the form
-    form.appendChild(input_name);
-    form.appendChild(saveButton);
+    newBoxForm.appendChild(input_name);
+    newBoxForm.appendChild(saveButton);
 
-    // Add form to the list item, and list item to the list
-    newBox.appendChild(form);
-    boxList.appendChild(newBox);
+    boxList.appendChild(newBoxForm);
 }
 
 
@@ -87,6 +84,7 @@ function saveBox(input_name, x1, y1, x2, y2) {
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
+            box.style.display = 'none';
             fetchDataAndUpdateList();
         } else {
             alert('Error saving coordinates.');
@@ -125,14 +123,19 @@ function fetchDataAndUpdateList() {
 
             // Loop through the fetched data and create list items
             data.forEach(box => {
-                const boxElement = document.createElement('li');
-                // TODO add classes
-                // newBoxList.className = 'list-item';
+                const boxElement = document.createElement('details');
+                boxElement.className = 'accordion-item';
                 
                 // Create name element
-                const boxName = document.createElement('span');
-                boxName.textContent = `Name: ${box.name}, Position: ${box.x1} ${box.y1} ${box.x2} ${box.y2}`;
-                boxElement.appendChild(boxName);
+                const boxSummary = document.createElement('summary');
+                boxSummary.className = 'accordion-trigger'
+                boxSummary.textContent = box.name;
+                boxElement.appendChild(boxSummary);
+
+                const boxDetails = document.createElement('p');
+                boxDetails.className = 'accordion-content'
+                boxDetails.textContent = `Position: ${box.x1} ${box.y1} ${box.x2} ${box.y2}`;
+                boxElement.appendChild(boxDetails);
 
                 // Create delete button
                 const deleteBoxButton = document.createElement('button');

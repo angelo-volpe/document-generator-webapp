@@ -10,4 +10,6 @@ urlpatterns = [
     path('delete/box/<int:box_id>/', views.delete_box, name='delete_box'),
     path('save_box/', views.save_box, name='save_box'),
     path('box/<int:document_id>', views.get_boxes, name="get_boxes"),
+    # TODO implement view
+    # path('box/<int:box_id>', view.get_single_box, name="get_single_box")
 ]

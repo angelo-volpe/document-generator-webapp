@@ -2,7 +2,8 @@
 <html lang="en">
 
 {% load static %}
-<link rel="stylesheet" href="{% static 'documentapp/style.css' %}">
+<link rel="stylesheet" href="{% static 'documentapp/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'documentapp/css/boxes.css' %}">
 
 <head>
     <meta charset="UTF-8" content="width=device-width, initial-scale=1">
@@ -17,14 +18,13 @@
                 <!-- Image container with drawing functionality -->
                 <div id="document-container" class="document-container" data-document-id="{{ document.id }}">
                     <img src="{{ document.image.url }}" alt="{{ document.name }}" class="image">
-                    <div class="bounding-box" style="display: none;"></div>
+                    <div id="box" class="bounding-box" style="display: none;"></div>
                 </div>
             </div>
         </section>
         <section>
             <h3 class="heading">Boxes</h3>
-            <div class="padded">
-                <ul id="box-coordinates-{{ document.id }}"></ul>          
+            <div id="box-list-{{ document.id }}" class="accordion-container">       
             </div>
         </section>
     </div>
