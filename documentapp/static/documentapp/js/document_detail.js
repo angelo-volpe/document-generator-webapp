@@ -1,6 +1,5 @@
 let startX, startY, endX, endY;
 const documentContainer = document.getElementById('document-container')
-const box = document.getElementById('box');
 const documentId = documentContainer.dataset.documentId;
 const boxList = document.getElementById(`box-list-${documentId}`);
 
@@ -8,11 +7,7 @@ const boxList = document.getElementById(`box-list-${documentId}`);
 documentContainer.addEventListener('mousedown', (event) => {
     startX = event.offsetX;
     startY = event.offsetY;
-    box.style.left = `${startX}px`;
-    box.style.top = `${startY}px`;
-    box.style.width = '0px';
-    box.style.height = '0px';
-    box.style.display = 'block';
+    addBoxElement(startX, startY, 0, 0, "new_box");
 });
 
 
@@ -20,6 +15,8 @@ documentContainer.addEventListener('mousemove', (event) => {
     if (event.buttons !== 1) return;  // Only draw when the mouse is pressed
     endX = event.offsetX;
     endY = event.offsetY;
+
+    box = document.getElementById("new_box");
     box.style.width = `${Math.abs(endX - startX)}px`;
     box.style.height = `${Math.abs(endY - startY)}px`;
     box.style.left = `${Math.min(startX, endX)}px`;
@@ -28,7 +25,7 @@ documentContainer.addEventListener('mousemove', (event) => {
 
 
 documentContainer.addEventListener('mouseup', () => {
-    addBox(startX, startY, endX, endY)
+    addBoxForm(startX, startY, endX, endY)
 });
 
 
@@ -37,7 +34,7 @@ function getCSRFToken() {
 }
 
 
-function addBox(x1, y1, x2, y2) {
+function addBoxForm(startX, startY, endX, endY) {
     const newBoxForm = document.createElement('form');
 
     const input_name = document.createElement('input');
@@ -48,7 +45,7 @@ function addBox(x1, y1, x2, y2) {
     const saveButton = document.createElement('button');
     saveButton.type = 'button';
     saveButton.textContent = 'Save Box';
-    saveButton.onclick = () => saveBox(input_name, x1, y1, x2, y2);
+    saveButton.onclick = () => saveBox(input_name, startX, startY, endX, endY);
 
     // Add input and button to the form
     newBoxForm.appendChild(input_name);
@@ -58,7 +55,7 @@ function addBox(x1, y1, x2, y2) {
 }
 
 
-function saveBox(input_name, x1, y1, x2, y2) {
+function saveBox(input_name, startX, startY, endX, endY) {
     const boxName = input_name.value
 
     if (!boxName) {
@@ -75,16 +72,17 @@ function saveBox(input_name, x1, y1, x2, y2) {
         body: new URLSearchParams({
             document_id: documentId,
             name: boxName,
-            x1: x1,
-            y1: y1,
-            x2: x2,
-            y2: y2
+            start_x: startX,
+            start_y: startY,
+            end_x: endX,
+            end_y: endY
         })
     })
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
-            box.style.display = 'none';
+            box = document.getElementById("new_box");
+            box.remove()
             fetchDataAndUpdateList();
         } else {
             alert('Error saving coordinates.');
@@ -114,6 +112,48 @@ function deleteBox(boxId, boxElement) {
 }
 
 
+function addBoxElement(startX, startY, endX, endY, id) {
+    const actual_box = document.createElement('div');
+    actual_box.id = id;
+    actual_box.className = 'bounding-box';
+    actual_box.style.width = `${Math.abs(endX - startX)}px`;
+    actual_box.style.height = `${Math.abs(endY - startY)}px`;
+    actual_box.style.left = `${Math.min(startX, endX)}px`;
+    actual_box.style.top = `${Math.min(startY, endY)}px`;
+    actual_box.style.display = 'block';
+    documentContainer.appendChild(actual_box)
+}
+
+
+function showBox(boxId) {
+    fetch(getSingleBoxUrl.replace("1", boxId),
+    {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': CSRFToken
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        box_id = `box-${data.id}`
+        box = document.getElementById(box_id)
+        
+        if (!box) {
+            addBoxElement(data.start_x, data.start_y, data.end_x, data.end_y, box_id)
+        }
+        else {
+            box.remove()
+        }
+    })
+}
+
+
 function fetchDataAndUpdateList() {
     fetch(getBoxesUrl.replace("1", documentId))
         .then(response => response.json())
@@ -134,7 +174,7 @@ function fetchDataAndUpdateList() {
 
                 const boxDetails = document.createElement('p');
                 boxDetails.className = 'accordion-content'
-                boxDetails.textContent = `Position: ${box.x1} ${box.y1} ${box.x2} ${box.y2}`;
+                boxDetails.textContent = `Position: ${box.start_x} ${box.start_y} ${box.end_x} ${box.end_y}`;
                 boxElement.appendChild(boxDetails);
 
                 // Create delete button
@@ -144,6 +184,14 @@ function fetchDataAndUpdateList() {
                     deleteBox(box.id, boxElement);
                 });
                 boxElement.appendChild(deleteBoxButton);
+
+                // Create show button
+                const showBoxButton = document.createElement('button');
+                showBoxButton.textContent = 'Show Box';
+                showBoxButton.addEventListener('click', () => {
+                    showBox(box.id);
+                });
+                boxElement.appendChild(showBoxButton);
 
                 // Append the list item to the list
                 boxList.appendChild(boxElement);

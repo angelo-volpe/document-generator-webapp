@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 
-from .models import Document, BoxCoordinate, BoxCoordinateSerializer
+from .models import Document, Box, BoxSerializer
 from .forms import DocumentForm
 
 
@@ -23,7 +23,7 @@ def add_document(request):
 
 def document_detail(request, document_id):
     document = get_object_or_404(Document, pk=document_id)
-    boxes = BoxCoordinate.objects.filter(document=document_id)
+    boxes = Box.objects.filter(document=document_id)
     return render(request, 'documentapp/document_detail.html', {'document': document, "boxes": boxes})
 
 
@@ -38,10 +38,10 @@ def delete_document(request, document_id):
 def delete_box(request, box_id):
     if request.method == 'DELETE':
         try:
-            box = BoxCoordinate.objects.get(id=box_id)
+            box = Box.objects.get(id=box_id)
             box.delete()
             return JsonResponse({'status': 'success'})
-        except BoxCoordinate.DoesNotExist:
+        except Box.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Box not found'}, status=404)
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
 
@@ -51,20 +51,29 @@ def save_box(request):
         # Get data from AJAX request
         document_id = request.POST.get('document_id')
         name = request.POST.get('name')
-        x1, y1 = int(request.POST.get('x1')), int(request.POST.get('y1'))
-        x2, y2 = int(request.POST.get('x2')), int(request.POST.get('y2'))
+        start_x, start_y = int(request.POST.get('start_x')), int(request.POST.get('start_y'))
+        end_x, end_y = int(request.POST.get('end_x')), int(request.POST.get('end_y'))
         
         # Get the Document and save the BoxCoordinate
         document = Document.objects.get(id=document_id)
-        BoxCoordinate.objects.create(document=document, name=name, x1=x1, y1=y1, x2=x2, y2=y2)
+        Box.objects.create(document=document, name=name, start_x=start_x, start_y=start_y, end_x=end_x, end_y=end_y)
         
         return JsonResponse({'status': 'success', 'message': 'Coordinates saved successfully.'})
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
 
 def get_boxes(request, document_id):
-    document = get_object_or_404(Document, id=document_id)
-    box_list = document.box_coordinates.all()
-    data = BoxCoordinateSerializer(box_list, many=True).data
+    if request.method == 'GET':
+        document = get_object_or_404(Document, id=document_id)
+        box_list = document.box_coordinates.all()
+        data = BoxSerializer(box_list, many=True).data
 
-    return JsonResponse(data, safe=False)
+        return JsonResponse(data, safe=False)
+
+
+def get_single_box(request, box_id):
+    if request.method == 'GET':
+        box = get_object_or_404(Box, id=box_id)
+        data = BoxSerializer(box).data
+
+        return JsonResponse(data)
