@@ -15,7 +15,7 @@ class Box(models.Model):
     name = models.CharField(max_length=100)
     is_alphabetic = models.BooleanField(default=False)
     is_numeric = models.BooleanField(default=False)
-    mean_lenght = models.IntegerField(default=0)
+    mean_length = models.IntegerField(default=0)
     start_x = models.IntegerField()
     start_y = models.IntegerField()
     end_x = models.IntegerField()

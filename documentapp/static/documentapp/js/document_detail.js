@@ -7,7 +7,7 @@ const boxList = document.getElementById(`box-list-${documentId}`);
 documentContainer.addEventListener('mousedown', (event) => {
     startX = event.offsetX;
     startY = event.offsetY;
-    addBoxElement(startX, startY, 0, 0, "new_box");
+    drawBox(startX, startY, startX, startY, "new_box");
 });
 
 
@@ -25,7 +25,7 @@ documentContainer.addEventListener('mousemove', (event) => {
 
 
 documentContainer.addEventListener('mouseup', () => {
-    addBoxForm(startX, startY, endX, endY)
+    addBoxNameForm(startX, startY, endX, endY)
 });
 
 
@@ -34,36 +34,34 @@ function getCSRFToken() {
 }
 
 
-function addBoxForm(startX, startY, endX, endY) {
+function addBoxNameForm(startX, startY, endX, endY) {
     const newBoxForm = document.createElement('form');
 
-    const input_name = document.createElement('input');
-    input_name.type = 'text';
-    input_name.placeholder = 'Enter Box name';
-    input_name.required = true;
+    const inputName = document.createElement('input');
+    inputName.type = 'text';
+    inputName.placeholder = 'Enter Box name';
+    inputName.required = true;
 
     const saveButton = document.createElement('button');
     saveButton.type = 'button';
     saveButton.textContent = 'Save Box';
-    saveButton.onclick = () => saveBox(input_name, startX, startY, endX, endY);
+    saveButton.onclick = () => saveBox(inputName.value, startX, startY, endX, endY);
 
     // Add input and button to the form
-    newBoxForm.appendChild(input_name);
+    newBoxForm.appendChild(inputName);
     newBoxForm.appendChild(saveButton);
 
     boxList.appendChild(newBoxForm);
 }
 
 
-function saveBox(input_name, startX, startY, endX, endY) {
-    const boxName = input_name.value
-
+function saveBox(boxName, startX, startY, endX, endY) {
     if (!boxName) {
         alert('Please enter a name for the new Box.');
         return;
     }
 
-    fetch(saveBoxUrl, {
+    fetch(BoxListUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -91,7 +89,7 @@ function saveBox(input_name, startX, startY, endX, endY) {
 
 
 function deleteBox(boxId, boxElement) {
-    fetch(deleteBoxUrl.replace("1", boxId),
+    fetch(BoxDetailUrl.replace("1", boxId),
     {
         method: 'DELETE',
         headers: {
@@ -107,11 +105,33 @@ function deleteBox(boxId, boxElement) {
             console.error('Failed to delete item');
         }
     })
-    .catch(error => console.error('Error deleting item:', error));
+}
+
+function updateBox(boxId, isNumeric, isAlphabetic, meanLength) {
+    fetch(BoxDetailUrl.replace("1", boxId),
+    {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': CSRFToken
+        },
+        body: JSON.stringify({
+            is_numeric: isNumeric,
+            is_alphabetic: isAlphabetic,
+            mean_length: meanLength
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            console.info('Box udated')
+        } else {
+            console.error('Failed to update box');
+        }
+    })
 }
 
 
-function addBoxElement(startX, startY, endX, endY, id) {
+function drawBox(startX, startY, endX, endY, id) {
     const actual_box = document.createElement('div');
     actual_box.id = id;
     actual_box.className = 'bounding-box';
@@ -125,7 +145,7 @@ function addBoxElement(startX, startY, endX, endY, id) {
 
 
 function showBox(boxId) {
-    fetch(getSingleBoxUrl.replace("1", boxId),
+    fetch(BoxDetailUrl.replace("1", boxId),
     {
         method: 'GET',
         headers: {
@@ -144,7 +164,7 @@ function showBox(boxId) {
         box = document.getElementById(box_id)
         
         if (!box) {
-            addBoxElement(data.start_x, data.start_y, data.end_x, data.end_y, box_id)
+            drawBox(data.start_x, data.start_y, data.end_x, data.end_y, box_id)
         }
         else {
             box.remove()
@@ -171,11 +191,36 @@ function fetchDataAndUpdateList() {
                 boxSummary.textContent = box.name;
                 boxElement.appendChild(boxSummary);
                 
-                // add position description
-                const boxDetails = document.createElement('p');
-                boxDetails.className = 'accordion-content'
-                boxDetails.textContent = `Position: ${box.start_x} ${box.start_y} ${box.end_x} ${box.end_y}`;
-                boxElement.appendChild(boxDetails);
+                // Create is Numeric form
+                const isNumericForm = document.createElement('form');
+                const numericLabel = document.createElement('label');
+                const numericCheckbox = document.createElement('input');
+                numericLabel.textContent = 'is numeric'
+                numericCheckbox.type = 'checkbox';
+                numericLabel.appendChild(numericCheckbox);
+                isNumericForm.appendChild(numericLabel)
+                boxElement.appendChild(isNumericForm)
+
+                // Create is Alphabetic form
+                const isAlphabeticForm = document.createElement('form');
+                const alphabeticLabel = document.createElement('label');
+                const alphabeticCheckbox = document.createElement('input');
+                alphabeticLabel.textContent = 'is alphabetic'
+                alphabeticCheckbox.type = 'checkbox';
+                alphabeticLabel.appendChild(alphabeticCheckbox);
+                isAlphabeticForm.appendChild(alphabeticLabel)
+                boxElement.appendChild(isAlphabeticForm)
+
+                // Create is Mean Length form
+                const meanLengthForm = document.createElement('form');
+                const meanLengthLabel = document.createElement('label');
+                const meanLengthInput = document.createElement('input');
+                meanLengthLabel.textContent = 'mean length'
+                meanLengthInput.type = 'text';
+                meanLengthInput.value = 10
+                meanLengthLabel.appendChild(meanLengthInput);
+                meanLengthForm.appendChild(meanLengthLabel)
+                boxElement.appendChild(meanLengthForm)
 
                 // Create delete button
                 const deleteBoxButton = document.createElement('button');
@@ -197,7 +242,7 @@ function fetchDataAndUpdateList() {
                 const updateBoxButton = document.createElement('button');
                 updateBoxButton.textContent = 'Update Box';
                 updateBoxButton.addEventListener('click', () => {
-                    updateBox(box.id);
+                    updateBox(box.id, numericCheckbox.checked, alphabeticCheckbox.checked, meanLengthInput.value);
                 });
                 boxElement.appendChild(updateBoxButton);
 
@@ -207,9 +252,6 @@ function fetchDataAndUpdateList() {
         })
         .catch(error => console.error('Error fetching data:', error));
 }
-
-// Fetch and update the list every 5 seconds
-// setInterval(fetchDataAndUpdateList, 5000);  // Fetches data every 5 seconds
 
 // Initial load
 fetchDataAndUpdateList();

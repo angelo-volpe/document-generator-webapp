@@ -50,7 +50,8 @@ def get_document_boxes(request, document_id):
 class BoxViewSet(viewsets.GenericViewSet, 
                  mixins.CreateModelMixin,
                  mixins.DestroyModelMixin,
-                 mixins.RetrieveModelMixin):
+                 mixins.RetrieveModelMixin,
+                 mixins.UpdateModelMixin):
     """
     A simple ViewSet for viewing and editing boxes.
     """

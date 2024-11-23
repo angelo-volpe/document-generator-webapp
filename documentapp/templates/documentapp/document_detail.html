@@ -32,9 +32,8 @@
 
     <script>
         const getBoxesUrl = "{% url 'documentapp:get_boxes' document_id=1 %}"
-        const deleteBoxUrl = "{% url 'documentapp:box-detail' id=1 %}"
-        const saveBoxUrl = "{% url 'documentapp:box-list' %}"
-        const getSingleBoxUrl = "{% url 'documentapp:box-detail' id=1 %}"
+        const BoxDetailUrl = "{% url 'documentapp:box-detail' id=1 %}"
+        const BoxListUrl = "{% url 'documentapp:box-list' %}"
         const CSRFToken = "{{ csrf_token }}"
     </script> 
     <script src="{% static 'documentapp/js/document_detail.js' %}"></script>
