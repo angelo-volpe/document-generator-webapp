@@ -70,7 +70,7 @@ function saveBox(input_name, startX, startY, endX, endY) {
             'X-CSRFToken': CSRFToken
         },
         body: new URLSearchParams({
-            document_id: documentId,
+            document: documentId,
             name: boxName,
             start_x: startX,
             start_y: startY,
@@ -78,9 +78,8 @@ function saveBox(input_name, startX, startY, endX, endY) {
             end_y: endY
         })
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
+    .then(response => {
+        if (response.ok) {
             box = document.getElementById("new_box");
             box.remove()
             fetchDataAndUpdateList();
@@ -171,7 +170,8 @@ function fetchDataAndUpdateList() {
                 boxSummary.className = 'accordion-trigger'
                 boxSummary.textContent = box.name;
                 boxElement.appendChild(boxSummary);
-
+                
+                // add position description
                 const boxDetails = document.createElement('p');
                 boxDetails.className = 'accordion-content'
                 boxDetails.textContent = `Position: ${box.start_x} ${box.start_y} ${box.end_x} ${box.end_y}`;
@@ -192,6 +192,14 @@ function fetchDataAndUpdateList() {
                     showBox(box.id);
                 });
                 boxElement.appendChild(showBoxButton);
+
+                // Create update button
+                const updateBoxButton = document.createElement('button');
+                updateBoxButton.textContent = 'Update Box';
+                updateBoxButton.addEventListener('click', () => {
+                    updateBox(box.id);
+                });
+                boxElement.appendChild(updateBoxButton);
 
                 // Append the list item to the list
                 boxList.appendChild(boxElement);

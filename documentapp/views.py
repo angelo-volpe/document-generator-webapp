@@ -1,5 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import viewsets, mixins
 
 from .models import Document, Box, BoxSerializer
 from .forms import DocumentForm
@@ -35,45 +38,22 @@ def delete_document(request, document_id):
     return render(request, 'documentapp/confirm_delete.html', {'document_id': document_id})
 
 
-def delete_box(request, box_id):
-    if request.method == 'DELETE':
-        try:
-            box = Box.objects.get(id=box_id)
-            box.delete()
-            return JsonResponse({'status': 'success'})
-        except Box.DoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'Box not found'}, status=404)
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
-
-
-def save_box(request):
-    if request.method == 'POST':
-        # Get data from AJAX request
-        document_id = request.POST.get('document_id')
-        name = request.POST.get('name')
-        start_x, start_y = int(request.POST.get('start_x')), int(request.POST.get('start_y'))
-        end_x, end_y = int(request.POST.get('end_x')), int(request.POST.get('end_y'))
-        
-        # Get the Document and save the BoxCoordinate
-        document = Document.objects.get(id=document_id)
-        Box.objects.create(document=document, name=name, start_x=start_x, start_y=start_y, end_x=end_x, end_y=end_y)
-        
-        return JsonResponse({'status': 'success', 'message': 'Coordinates saved successfully.'})
-    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
-
-
-def get_boxes(request, document_id):
+def get_document_boxes(request, document_id):
     if request.method == 'GET':
         document = get_object_or_404(Document, id=document_id)
-        box_list = document.box_coordinates.all()
+        box_list = document.box.all()
         data = BoxSerializer(box_list, many=True).data
 
         return JsonResponse(data, safe=False)
 
 
-def get_single_box(request, box_id):
-    if request.method == 'GET':
-        box = get_object_or_404(Box, id=box_id)
-        data = BoxSerializer(box).data
-
-        return JsonResponse(data)
+class BoxViewSet(viewsets.GenericViewSet, 
+                 mixins.CreateModelMixin,
+                 mixins.DestroyModelMixin,
+                 mixins.RetrieveModelMixin):
+    """
+    A simple ViewSet for viewing and editing boxes.
+    """
+    queryset = Box.objects.all()
+    serializer_class = BoxSerializer
+    lookup_field = 'id'

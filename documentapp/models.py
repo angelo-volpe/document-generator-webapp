@@ -11,7 +11,7 @@ class Document(models.Model):
 
 
 class Box(models.Model):
-    document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='box_coordinates')
+    document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='box')
     name = models.CharField(max_length=100)
     is_alphabetic = models.BooleanField(default=False)
     is_numeric = models.BooleanField(default=False)
