@@ -197,6 +197,7 @@ function fetchDataAndUpdateList() {
                 const numericCheckbox = document.createElement('input');
                 numericLabel.textContent = 'is numeric'
                 numericCheckbox.type = 'checkbox';
+                numericCheckbox.checked = box.is_numeric
                 numericLabel.appendChild(numericCheckbox);
                 isNumericForm.appendChild(numericLabel)
                 boxElement.appendChild(isNumericForm)
@@ -207,6 +208,7 @@ function fetchDataAndUpdateList() {
                 const alphabeticCheckbox = document.createElement('input');
                 alphabeticLabel.textContent = 'is alphabetic'
                 alphabeticCheckbox.type = 'checkbox';
+                alphabeticCheckbox.checked = box.is_alphabetic
                 alphabeticLabel.appendChild(alphabeticCheckbox);
                 isAlphabeticForm.appendChild(alphabeticLabel)
                 boxElement.appendChild(isAlphabeticForm)
@@ -217,7 +219,7 @@ function fetchDataAndUpdateList() {
                 const meanLengthInput = document.createElement('input');
                 meanLengthLabel.textContent = 'mean length'
                 meanLengthInput.type = 'text';
-                meanLengthInput.value = 10
+                meanLengthInput.value = box.mean_length
                 meanLengthLabel.appendChild(meanLengthInput);
                 meanLengthForm.appendChild(meanLengthLabel)
                 boxElement.appendChild(meanLengthForm)
