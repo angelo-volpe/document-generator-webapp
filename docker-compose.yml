@@ -1,0 +1,23 @@
+services:
+  document_app:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - document_app_db
+  document_app_db:
+    image: postgres:17.2
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_USER: document_app_user
+      POSTGRES_PASSWORD: document_app_password
+      POSTGRES_DB: document_app_db
+
+volumes:
+  postgres_data:

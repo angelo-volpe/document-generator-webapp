@@ -145,31 +145,33 @@ function drawBox(startX, startY, endX, endY, id) {
 
 
 function showBox(boxId) {
-    fetch(BoxDetailUrl.replace("1", boxId),
-    {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': CSRFToken
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        box_id = `box-${data.id}`
-        box = document.getElementById(box_id)
-        
-        if (!box) {
+    const box_id = `box-${data.id}`
+    const box = document.getElementById(box_id)
+
+    if (box) {
+        box.remove()
+    }
+    else {
+        fetch(BoxDetailUrl.replace("1", boxId),
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': CSRFToken
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
             drawBox(data.start_x, data.start_y, data.end_x, data.end_y, box_id)
-        }
-        else {
-            box.remove()
-        }
-    })
+        })
+    }
+
+    
 }
 
 
