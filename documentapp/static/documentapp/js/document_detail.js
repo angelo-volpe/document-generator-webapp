@@ -145,7 +145,7 @@ function drawBox(startX, startY, endX, endY, id) {
 
 
 function showBox(boxId) {
-    const box_id = `box-${data.id}`
+    const box_id = `box-${boxId}`
     const box = document.getElementById(box_id)
 
     if (box) {
@@ -170,8 +170,6 @@ function showBox(boxId) {
             drawBox(data.start_x, data.start_y, data.end_x, data.end_y, box_id)
         })
     }
-
-    
 }
 
 
@@ -213,7 +211,7 @@ function fetchDataAndUpdateList() {
                 isAlphabeticForm.appendChild(alphabeticLabel)
                 boxElement.appendChild(isAlphabeticForm)
 
-                // Create is Mean Length form
+                // Create Mean Length form
                 const meanLengthForm = document.createElement('form');
                 const meanLengthLabel = document.createElement('label');
                 const meanLengthInput = document.createElement('input');
