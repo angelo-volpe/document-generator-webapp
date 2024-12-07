@@ -7,7 +7,7 @@ const boxList = document.getElementById(`box-list-${documentId}`);
 documentContainer.addEventListener('mousedown', (event) => {
     startX = event.offsetX;
     startY = event.offsetY;
-    drawBox(startX, startY, startX, startY, "new_box");
+    drawBox(startX, startY, startX, startY, 'new_box');
 });
 
 
@@ -16,7 +16,7 @@ documentContainer.addEventListener('mousemove', (event) => {
     endX = event.offsetX;
     endY = event.offsetY;
 
-    box = document.getElementById("new_box");
+    box = document.getElementById('new_box');
     box.style.width = `${Math.abs(endX - startX)}px`;
     box.style.height = `${Math.abs(endY - startY)}px`;
     box.style.left = `${Math.min(startX, endX)}px`;
@@ -28,6 +28,29 @@ documentContainer.addEventListener('mouseup', () => {
     addBoxNameForm(startX, startY, endX, endY)
 });
 
+function normaliseBoxCoordinates(startX, startY, endX, endY) {
+    docWidth = documentContainer.clientWidth;
+    docHeight = documentContainer.clientHeight;
+
+    startXNorm = startX / docWidth;
+    endXNorm = endX / docWidth;
+    startYNorm = startY / docHeight;
+    endYNorm = endY / docHeight;
+
+    return [startXNorm, startYNorm, endXNorm, endYNorm];
+}
+
+function denormaliseBoxCoordinates(startXNorm, startYNorm, endXNorm, endYNorm) {
+    docWidth = documentContainer.clientWidth;
+    docHeight = documentContainer.clientHeight;
+
+    startX = startXNorm * docWidth;
+    endX = endXNorm * docWidth;
+    startY = startYNorm * docHeight;
+    endY = endYNorm * docHeight;
+
+    return [startX, startY, endX, endY];
+}
 
 function getCSRFToken() {
     return document.querySelector('[name=csrfmiddlewaretoken]').value;
@@ -61,6 +84,10 @@ function saveBox(boxName, startX, startY, endX, endY) {
         return;
     }
 
+    [startXNorm, startYNorm, endXNorm, endYNorm] = normaliseBoxCoordinates(startX, startY, endX, endY);
+    console.info(startX, startY, endX, endY);
+    console.info(startXNorm, startYNorm, endXNorm, endYNorm);
+
     fetch(BoxListUrl, {
         method: 'POST',
         headers: {
@@ -70,10 +97,10 @@ function saveBox(boxName, startX, startY, endX, endY) {
         body: new URLSearchParams({
             document: documentId,
             name: boxName,
-            start_x: startX,
-            start_y: startY,
-            end_x: endX,
-            end_y: endY
+            start_x_norm: startXNorm,
+            start_y_norm: startYNorm,
+            end_x_norm: endXNorm,
+            end_y_norm: endYNorm
         })
     })
     .then(response => {
@@ -145,8 +172,8 @@ function drawBox(startX, startY, endX, endY, id) {
 
 
 function showBox(boxId) {
-    const box_id = `box-${boxId}`
-    const box = document.getElementById(box_id)
+    const boxElementId = `box-${boxId}`
+    const box = document.getElementById(boxElementId)
 
     if (box) {
         box.remove()
@@ -167,7 +194,8 @@ function showBox(boxId) {
             return response.json();
         })
         .then(data => {
-            drawBox(data.start_x, data.start_y, data.end_x, data.end_y, box_id)
+            [startX, startY, endX, endY] = denormaliseBoxCoordinates(data.start_x_norm, data.start_y_norm, data.end_x_norm, data.end_y_norm)
+            drawBox(startX, startY, endX, endY, boxElementId)
         })
     }
 }

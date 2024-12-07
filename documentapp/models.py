@@ -22,10 +22,10 @@ class Box(models.Model):
     is_alphabetic = models.BooleanField(default=False)
     is_numeric = models.BooleanField(default=False)
     mean_length = models.IntegerField(default=0)
-    start_x = models.IntegerField()
-    start_y = models.IntegerField()
-    end_x = models.IntegerField()
-    end_y = models.IntegerField()
+    start_x_norm = models.FloatField()
+    start_y_norm = models.FloatField()
+    end_x_norm = models.FloatField()
+    end_y_norm = models.FloatField()
 
     def __str__(self):
         return f"Box for {self.document.name} with name: {self.name} at ({self.start_x}, {self.start_y}), ({self.end_x}, {self.end_y})"
