@@ -14,3 +14,10 @@ python manage.py migrate
 ```
 docker compose up
 ```
+initialise the database
+```
+docker compose exec document_app python manage.py migrate --noinput
+```
+
+## Access the web interface
+http://localhost:8000/document_generator/

@@ -5,6 +5,7 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register('box', views.BoxViewSet)
+router.register('documents', views.DocumentViewSet)
 
 app_name = "documentapp"
 

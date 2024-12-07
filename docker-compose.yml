@@ -9,7 +9,9 @@ services:
     env_file:
       - ./.env.dev
     depends_on:
-      - document_app_db
+      document_app_db:
+        condition: service_healthy
+
   document_app_db:
     image: postgres:17.2
     volumes:
@@ -18,6 +20,11 @@ services:
       POSTGRES_USER: document_app_user
       POSTGRES_PASSWORD: document_app_password
       POSTGRES_DB: document_app_db
+    healthcheck:                                                                 
+      test: ["CMD-SHELL", "pg_isready -d document_app_db -U document_app_user"]
+      interval: 2s
+      timeout: 30s
+      retries: 15
 
 volumes:
   postgres_data:

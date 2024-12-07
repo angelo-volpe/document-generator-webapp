@@ -10,6 +10,12 @@ class Document(models.Model):
         return self.name
 
 
+class DocumentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Document
+        fields = ['id', 'name', 'image']
+
+
 class Box(models.Model):
     document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='box')
     name = models.CharField(max_length=100)

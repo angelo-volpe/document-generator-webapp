@@ -1,10 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import viewsets, mixins
 
-from .models import Document, Box, BoxSerializer
+from .models import Document, DocumentSerializer, Box, BoxSerializer
 from .forms import DocumentForm
 
 
@@ -57,4 +55,14 @@ class BoxViewSet(viewsets.GenericViewSet,
     """
     queryset = Box.objects.all()
     serializer_class = BoxSerializer
+    lookup_field = 'id'
+
+
+class DocumentViewSet(viewsets.GenericViewSet, 
+                      mixins.RetrieveModelMixin):
+    """
+    A simple ViewSet for viewing and editing boxes.
+    """
+    queryset = Document.objects.all()
+    serializer_class = DocumentSerializer
     lookup_field = 'id'

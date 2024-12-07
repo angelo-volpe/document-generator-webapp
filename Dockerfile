@@ -14,12 +14,3 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the application code into the container
 COPY . /app/
-
-# copy entrypoint.sh
-COPY ./entrypoint.sh .
-RUN sed -i 's/\r$//g' /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
-
-
-# run entrypoint.sh
-ENTRYPOINT ["/app/entrypoint.sh"]
