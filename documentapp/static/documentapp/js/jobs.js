@@ -1,4 +1,4 @@
-async function triggerGenerateSampleDAG() {
+async function triggerGenerateSampleDAG(documentId) {
     try {
         const response = await fetch(triggerSamplingDAGUrl, {
             method: "POST",
@@ -7,7 +7,10 @@ async function triggerGenerateSampleDAG() {
                 "X-CSRFToken": CSRFToken
             },
             body: JSON.stringify({
-                conf: {}
+                conf: {
+                    "document_id": documentId,
+                    "num_samples": "10"
+                }
             }),
         });
 
