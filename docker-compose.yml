@@ -11,6 +11,8 @@ services:
     depends_on:
       document_app_db:
         condition: service_healthy
+    networks:
+      - document_app_shared_network
 
   document_app_db:
     image: postgres:17.2
@@ -25,6 +27,13 @@ services:
       interval: 2s
       timeout: 30s
       retries: 15
+    networks:
+      - document_app_shared_network
 
 volumes:
   postgres_data:
+
+networks:
+  document_app_shared_network:
+    external: true
+  document_app_private_network:

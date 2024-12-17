@@ -13,7 +13,7 @@
             <!-- Delete button -->
             <form action="{% url 'documentapp:delete_document' document.id %}" method="post" style="display:inline;">
                 {% csrf_token %}
-                <button type="Delete">Delete Document</button>
+                <button type="submit">Delete Document</button>
             </form>
         {% endfor %}
     </ul>

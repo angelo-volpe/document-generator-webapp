@@ -10,6 +10,14 @@
     <title>Document Details</title>
 </head>
 <body>
+    <script>
+        const getBoxesUrl = "{% url 'documentapp:get_boxes' document_id=1 %}"
+        const BoxDetailUrl = "{% url 'documentapp:box-detail' id=1 %}"
+        const BoxListUrl = "{% url 'documentapp:box-list' %}"
+        const triggerSamplingDAGUrl = "{% url 'documentapp:trigger_sampling_dag' %}"
+        const CSRFToken = "{{ csrf_token }}"
+    </script> 
+    <script src="{% static 'documentapp/js/jobs.js' %}"></script>
     <h1>Document Details</h1>
     <div class="padded-boxes">
         <section>
@@ -27,15 +35,19 @@
             </div>
         </section>
     </div>
-    
-    <a href="{% url 'documentapp:document_list' %}">Back to Document List</a>
 
-    <script>
-        const getBoxesUrl = "{% url 'documentapp:get_boxes' document_id=1 %}"
-        const BoxDetailUrl = "{% url 'documentapp:box-detail' id=1 %}"
-        const BoxListUrl = "{% url 'documentapp:box-list' %}"
-        const CSRFToken = "{{ csrf_token }}"
-    </script> 
+    <div>
+        <button onclick="triggerGenerateSampleDAG()" type="submit">Generate Sample</button>
+    </div>
+    
+    <div>
+        <a href="{% url 'documentapp:sample_documents_list' %}?template_document={{ document.id }}">Document Samples</a>
+    </div>
+
+    <div>
+        <a href="{% url 'documentapp:document_list' %}">Back to Document List</a>
+    </div>
+
     <script src="{% static 'documentapp/js/document_detail.js' %}"></script>
 </body>
 </html>

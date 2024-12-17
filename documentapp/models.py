@@ -13,7 +13,38 @@ class Document(models.Model):
 class DocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Document
-        fields = ['id', 'name', 'image']
+        fields = "__all__"
+
+
+class SampleDocument(models.Model):
+    name = models.CharField(max_length=100)
+    image = models.ImageField(upload_to="document_samples/")
+    template_document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name="template_document")
+
+    def __str__(self):
+        return self.name
+    
+
+class SampleDocumentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SampleDocument
+        fields = "__all__"
+    
+
+class SampleBox(models.Model):
+    sample_document = models.ForeignKey(SampleDocument, on_delete=models.CASCADE, related_name='sample_box')
+    name = models.CharField(max_length=100)
+    label = models.CharField(max_length=100)
+    start_x_norm = models.FloatField()
+    start_y_norm = models.FloatField()
+    end_x_norm = models.FloatField()
+    end_y_norm = models.FloatField()
+
+
+class SampleBoxSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SampleBox
+        fields = '__all__'
 
 
 class Box(models.Model):

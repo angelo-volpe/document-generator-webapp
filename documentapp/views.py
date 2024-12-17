@@ -1,13 +1,22 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from rest_framework import viewsets, mixins
+from django.views.generic import ListView
 
-from .models import Document, DocumentSerializer, Box, BoxSerializer
+from requests.auth import HTTPBasicAuth
+import json
+import requests
+
+from .models import *
 from .forms import DocumentForm
+
+AIRFLOW_API_URL = "http://airflow-webserver:8080/api/v1/dags"
+AIRFLOW_USER = "airflow"
+AIRFLOW_PASSWORD = "airflow"
 
 
 def document_list(request):
-    documents = Document.objects.all()  # Fetch all items from the database
+    documents = Document.objects.all()
     return render(request, 'documentapp/document_list.html', {'documents': documents})
 
 
@@ -45,14 +54,51 @@ def get_document_boxes(request, document_id):
         return JsonResponse(data, safe=False)
 
 
+class SampleDocumentListView(ListView):
+    model = SampleDocument
+    template_name = "documentapp/sample_document_list.html"
+    context_object_name = "sample_documents"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        template_document_id = self.request.GET.get('template_document')
+        
+        if template_document_id:
+            queryset = queryset.filter(template_document__id=template_document_id)
+        
+        return queryset
+
+
+## Jobs API
+def trigger_sampling_dag(request):
+    if request.method == "POST":
+        try:
+            dag_id = "generate_document_samples"
+            data = json.loads(request.body)
+            conf = data.get("conf", {})
+            
+            url = f"{AIRFLOW_API_URL}/{dag_id}/dagRuns"
+
+            with requests.Session() as session:
+                response = session.post(
+                    url,
+                    json={"conf": conf},
+                    auth=HTTPBasicAuth(AIRFLOW_USER, AIRFLOW_PASSWORD),
+                    timeout=10
+                )
+            return JsonResponse(response.json(), status=response.status_code)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+    return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+### REST API
 class BoxViewSet(viewsets.GenericViewSet, 
                  mixins.CreateModelMixin,
                  mixins.DestroyModelMixin,
                  mixins.RetrieveModelMixin,
                  mixins.UpdateModelMixin):
-    """
-    A simple ViewSet for viewing and editing boxes.
-    """
     queryset = Box.objects.all()
     serializer_class = BoxSerializer
     lookup_field = 'id'
@@ -60,9 +106,24 @@ class BoxViewSet(viewsets.GenericViewSet,
 
 class DocumentViewSet(viewsets.GenericViewSet, 
                       mixins.RetrieveModelMixin):
-    """
-    A simple ViewSet for viewing and editing boxes.
-    """
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
+    lookup_field = 'id'
+
+
+class SampleDocumentViewSet(viewsets.GenericViewSet, 
+                            mixins.RetrieveModelMixin,
+                            mixins.CreateModelMixin,
+                            ):
+    queryset = SampleDocument.objects.all()
+    serializer_class = SampleDocumentSerializer
+    lookup_field = 'id'
+
+
+class SampleBoxViewSet(viewsets.GenericViewSet, 
+                       mixins.RetrieveModelMixin,
+                       mixins.CreateModelMixin,
+                       ):
+    queryset = SampleBox.objects.all()
+    serializer_class = SampleBoxSerializer
     lookup_field = 'id'

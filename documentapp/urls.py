@@ -6,6 +6,7 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register('box', views.BoxViewSet)
 router.register('documents', views.DocumentViewSet)
+router.register('api/sample_documents', views.SampleDocumentViewSet)
 
 app_name = "documentapp"
 
@@ -15,5 +16,7 @@ urlpatterns = [
     path("new/", views.add_document, name='add_document'),
     path('delete/<int:document_id>/', views.delete_document, name='delete_document'),
     path('<int:document_id>/boxes', views.get_document_boxes, name="get_boxes"),
+    path('sample_documents/', views.SampleDocumentListView.as_view(), name='sample_documents_list'),
+    path("trigger_sampling_dag/", views.trigger_sampling_dag, name="trigger_sampling_dag"),
     path("", include(router.urls))
 ]

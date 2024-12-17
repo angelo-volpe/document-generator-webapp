@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample Documents</title>
+</head>
+<body>
+    <h1 style="text-align: center;">List of Sample Documents</h1>
+    <ul>
+        {% for sample in sample_documents %}
+            <!-- Sample Name -->
+            <li><a href="{{ sample.image.url }}">{{ sample.name }}</a></li>
+        {% endfor %}
+    </ul>
+    <div>
+        <a href="{% url 'documentapp:document_detail' request.GET.template_document %}">Back to Template Document</a>
+    </div>
+</body>
+</html>
