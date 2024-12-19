@@ -12,6 +12,8 @@ import requests
 
 from .models import *
 from .forms import DocumentForm
+from .logging_config import logger
+import traceback
 
 AIRFLOW_API_URL = "http://airflow-webserver:8080/api/v1/dags"
 AIRFLOW_USER = "airflow"
@@ -145,3 +147,29 @@ class SampleBoxViewSet(viewsets.GenericViewSet,
     queryset = SampleBox.objects.all()
     serializer_class = SampleBoxSerializer
     lookup_field = 'id'
+
+    @action(detail=False, methods=["post"])
+    def create_sample_boxes(self, request):
+        try:
+            data = request.data
+            sample_document_id = data.get("sample_document_id")
+            boxes = data.get("boxes", [])
+
+            for box in boxes:
+                template_box_id = box.pop("template_box_id")
+                SampleBox.objects.create(sample_document_id=sample_document_id, 
+                                         template_box_id=template_box_id, 
+                                         **box)
+
+            return Response({
+                "message": f"Created {len(boxes)} SampleBox(es)."
+            }, status=status.HTTP_201_CREATED)
+        except SampleDocument.DoesNotExist:
+            return Response({
+                "error": "SampleDocument not found."
+            }, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            logger.error(traceback.format_exc())
+            return Response({
+                "error": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -16,6 +16,7 @@ docker compose up
 ```
 initialise the database
 ```
+python manage.py makemigrations
 docker compose exec document_app python manage.py migrate --noinput
 ```
 
