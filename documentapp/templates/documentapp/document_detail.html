@@ -15,9 +15,9 @@
         const BoxDetailUrl = "{% url 'documentapp:box-detail' id=1 %}"
         const BoxListUrl = "{% url 'documentapp:box-list' %}"
         const triggerSamplingDAGUrl = "{% url 'documentapp:trigger_sampling_dag' %}"
+        const deleteSamplesUrl = "{% url 'documentapp:sample-documents-delete-template-samples' %}"
         const CSRFToken = "{{ csrf_token }}"
     </script> 
-    <script src="{% static 'documentapp/js/jobs.js' %}"></script>
     <h1>Document Details</h1>
     <div class="padded-boxes">
         <section>
@@ -37,17 +37,15 @@
     </div>
 
     <div>
-        <button onclick="triggerGenerateSampleDAG('{{ document.id }}')" type="submit">Generate Sample</button>
-    </div>
-    
-    <div>
+        <br>
+        <label for="numSamplesInput">Number of Samples:</label>
+        <input type="text" id="numSamplesInput">
+        <button id="generateSampleButton" data-document-id="{{ document.id }}" type="submit">Generate Sample</button>
+        <br><br>
         <a href="{% url 'documentapp:sample_documents_list' %}?template_document={{ document.id }}">Document Samples</a>
-    </div>
-
-    <div>
+        <br><br>
         <a href="{% url 'documentapp:document_list' %}">Back to Document List</a>
     </div>
-
     <script src="{% static 'documentapp/js/document_detail.js' %}"></script>
 </body>
 </html>

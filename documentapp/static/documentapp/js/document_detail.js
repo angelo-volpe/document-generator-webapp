@@ -4,6 +4,13 @@ const documentId = documentContainer.dataset.documentId;
 const boxList = document.getElementById(`box-list-${documentId}`);
 
 
+document.getElementById("generateSampleButton").addEventListener("click", function() {
+    const numSamplesValue = document.getElementById("numSamplesInput").value;
+    deleteSamples(documentId)
+    triggerGenerateSampleDAG(documentId, numSamplesValue);
+});
+
+
 documentContainer.addEventListener('mousedown', (event) => {
     startX = event.offsetX;
     startY = event.offsetY;
@@ -16,17 +23,68 @@ documentContainer.addEventListener('mousemove', (event) => {
     endX = event.offsetX;
     endY = event.offsetY;
 
-    box = document.getElementById('new_box');
-    box.style.width = `${Math.abs(endX - startX)}px`;
-    box.style.height = `${Math.abs(endY - startY)}px`;
-    box.style.left = `${Math.min(startX, endX)}px`;
-    box.style.top = `${Math.min(startY, endY)}px`;
+    new_box = document.getElementById('new_box');
+    new_box.style.width = `${Math.abs(endX - startX)}px`;
+    new_box.style.height = `${Math.abs(endY - startY)}px`;
+    new_box.style.left = `${Math.min(startX, endX)}px`;
+    new_box.style.top = `${Math.min(startY, endY)}px`;
 });
 
 
 documentContainer.addEventListener('mouseup', () => {
     addBoxNameForm(startX, startY, endX, endY)
 });
+
+
+function deleteSamples(documentId) {
+    const url = deleteSamplesUrl + `?template_document=${documentId}`
+
+    fetch(url, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": CSRFToken
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error("Failed to delete related documents.");
+        }
+    })
+}
+
+
+async function triggerGenerateSampleDAG(documentId, numSamples) {
+    try {
+        const response = await fetch(triggerSamplingDAGUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": CSRFToken
+            },
+            body: JSON.stringify({
+                conf: {
+                    "document_id": documentId,
+                    "num_samples": numSamples
+                }
+            }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            alert(`DAG triggered successfully! Run ID: ${data.dag_run_id}`);
+        } else {
+            const error = await response.json();
+            alert(`Error: ${error.error || "Failed to trigger DAG"}`);
+        }
+    } catch (error) {
+        console.error("Network error:", error);
+        alert("Failed to trigger DAG due to a network error.");
+    }
+}
+
 
 function normaliseBoxCoordinates(startX, startY, endX, endY) {
     docWidth = documentContainer.clientWidth;
@@ -40,6 +98,7 @@ function normaliseBoxCoordinates(startX, startY, endX, endY) {
     return [startXNorm, startYNorm, endXNorm, endYNorm];
 }
 
+
 function denormaliseBoxCoordinates(startXNorm, startYNorm, endXNorm, endYNorm) {
     docWidth = documentContainer.clientWidth;
     docHeight = documentContainer.clientHeight;
@@ -50,10 +109,6 @@ function denormaliseBoxCoordinates(startXNorm, startYNorm, endXNorm, endYNorm) {
     endY = endYNorm * docHeight;
 
     return [startX, startY, endX, endY];
-}
-
-function getCSRFToken() {
-    return document.querySelector('[name=csrfmiddlewaretoken]').value;
 }
 
 
@@ -105,8 +160,8 @@ function saveBox(boxName, startX, startY, endX, endY) {
     })
     .then(response => {
         if (response.ok) {
-            box = document.getElementById("new_box");
-            box.remove()
+            new_box = document.getElementById("new_box");
+            new_box.remove()
             fetchDataAndUpdateList();
         } else {
             alert('Error saving coordinates.');

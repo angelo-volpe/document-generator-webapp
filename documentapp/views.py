@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
-from rest_framework import viewsets, mixins
 from django.views.generic import ListView
+from rest_framework import viewsets, mixins
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import status
 
 from requests.auth import HTTPBasicAuth
 import json
@@ -113,11 +116,26 @@ class DocumentViewSet(viewsets.GenericViewSet,
 
 class SampleDocumentViewSet(viewsets.GenericViewSet, 
                             mixins.RetrieveModelMixin,
-                            mixins.CreateModelMixin,
-                            ):
+                            mixins.CreateModelMixin):
     queryset = SampleDocument.objects.all()
     serializer_class = SampleDocumentSerializer
     lookup_field = 'id'
+
+    @action(detail=False, methods=["delete"])
+    def delete_template_samples(self, request):
+        try:
+            template_document = request.query_params.get("template_document")
+
+            related_documents = SampleDocument.objects.filter(template_document=template_document)
+            deleted_count = related_documents.delete()
+
+            return Response({
+                "message": f"Deleted {deleted_count[0]} related SampleDocument(s)."
+            }, status=status.HTTP_200_OK)
+        except Document.DoesNotExist:
+            return Response({
+                "error": "Template document not found."
+            }, status=status.HTTP_404_NOT_FOUND)
 
 
 class SampleBoxViewSet(viewsets.GenericViewSet, 
