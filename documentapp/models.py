@@ -40,7 +40,7 @@ class BoxSerializer(serializers.ModelSerializer):
 class SampleDocument(models.Model):
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to="document_samples/")
-    template_document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name="template_document")
+    template_document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name="samples")
 
     def __str__(self):
         return self.name

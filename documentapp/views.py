@@ -115,6 +115,18 @@ class DocumentViewSet(viewsets.GenericViewSet,
     serializer_class = DocumentSerializer
     lookup_field = 'id'
 
+    @action(detail=True, methods=["get"])
+    def get_samples(self, request, id=None):
+        try:
+            document = self.get_object()
+        except Document.DoesNotExist:
+            return Response({
+                "error": "Document not found."
+            }, status=status.HTTP_404_NOT_FOUND)
+        samples = document.samples.all()
+        serializer = SampleDocumentSerializer(samples, many=True)
+        return Response(serializer.data)
+
 
 class SampleDocumentViewSet(viewsets.GenericViewSet, 
                             mixins.RetrieveModelMixin,
@@ -138,6 +150,18 @@ class SampleDocumentViewSet(viewsets.GenericViewSet,
             return Response({
                 "error": "Template document not found."
             }, status=status.HTTP_404_NOT_FOUND)
+    
+    @action(detail=True, methods=["get"])
+    def get_boxes(self, request, id=None):
+        try:
+            sample_document = self.get_object()
+        except SampleDocument.DoesNotExist:
+            return Response({
+                "error": "SampleDocument not found."
+            }, status=status.HTTP_404_NOT_FOUND)
+        sample_boxes = sample_document.sample_box.all()
+        serializer = SampleBoxSerializer(sample_boxes, many=True)
+        return Response(serializer.data)
 
 
 class SampleBoxViewSet(viewsets.GenericViewSet, 
