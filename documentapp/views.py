@@ -8,6 +8,7 @@ from rest_framework import status
 
 from requests.auth import HTTPBasicAuth
 import json
+import base64
 import requests
 
 from .models import *
@@ -46,8 +47,36 @@ def delete_document(request, document_id):
     document = get_object_or_404(Document, id=document_id)
     if request.method == 'POST':
         document.delete()
-        return redirect('documentapp:document_list')
-    return render(request, 'documentapp/confirm_delete.html', {'document_id': document_id})
+    return redirect('documentapp:document_list')
+
+
+def document_prediction(request, document_id):
+    context = {"document_id": document_id}
+
+    if request.method == 'POST' and request.FILES['image']:
+        image = request.FILES['image']
+        image_data = image.read()
+        encoded_image = base64.b64encode(image_data).decode('utf-8')
+        base64_image = f"data:{image.content_type};base64,{encoded_image}"
+        # add image registration
+        data = {"images": [encoded_image]}
+        with requests.Session() as session:
+            response = session.post(
+                f"http://192.168.1.37:8866/predict/ocr_system_document_{document_id}",
+                headers={"Content-type": "application/json"},
+                data=json.dumps(data)
+            )
+        
+        if response.status_code != 200:
+            logger.error("model prediction failed")
+            return render(request, 'documentapp/document_prediction.html', context)
+
+        predictions = response.json()["results"][0]
+
+        context["base64_document"] = base64_image
+        context["predictions"] = predictions
+    
+    return render(request, 'documentapp/document_prediction.html', context)
 
 
 def get_document_boxes(request, document_id):

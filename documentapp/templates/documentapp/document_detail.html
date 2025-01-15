@@ -45,6 +45,8 @@
         <a href="{% url 'documentapp:sample_documents_list' %}?template_document={{ document.id }}">Document Samples</a>
         <br><br>
         <a href="{% url 'documentapp:document_list' %}">Back to Document List</a>
+        <br><br>
+        <a href="{% url 'documentapp:document_prediction' document.id %}">Document Prediction</a>
     </div>
     <script src="{% static 'documentapp/js/document_detail.js' %}"></script>
 </body>

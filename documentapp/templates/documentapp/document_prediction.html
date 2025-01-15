@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'documentapp/css/style.css' %}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload</title>
+</head>
+<body>
+    <h1>Document Prediction</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="image" accept="image/*" required>
+        <button type="submit">Predict</button>
+    </form>
+    
+    <a href="{% url 'documentapp:document_detail' document_id %}">Back</a>
+
+    {% if base64_document %}
+    <div class="padded-boxes">
+        <section>
+            <div class="padded">
+                <img src="{{ base64_document }}" alt="Document with Predictions" style="max-width: 100%; height: auto;">
+            </div>
+        </section>
+        <section>
+            <h3 class="heading">Boxes</h3>
+            <div id="predicted-box-list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Predicted Text</th>
+                            <th>Confidence</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for prediction in predictions %}
+                            <tr>
+                                <td>{{ prediction.text }}</td>
+                                <td>{{ prediction.confidence }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="3">No items available.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    {% endif %}
+    
+</body>
+</html>
