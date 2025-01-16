@@ -10,11 +10,15 @@ from requests.auth import HTTPBasicAuth
 import json
 import base64
 import requests
+import numpy as np
+import traceback
+import cv2
 
 from .models import *
 from .forms import DocumentForm
 from .logging_config import logger
-import traceback
+from .image_utils import align_images
+
 
 AIRFLOW_API_URL = "http://airflow-webserver:8080/api/v1/dags"
 AIRFLOW_USER = "airflow"
@@ -56,9 +60,19 @@ def document_prediction(request, document_id):
     if request.method == 'POST' and request.FILES['image']:
         image = request.FILES['image']
         image_data = image.read()
-        encoded_image = base64.b64encode(image_data).decode('utf-8')
-        base64_image = f"data:{image.content_type};base64,{encoded_image}"
-        # add image registration
+
+        image_array = np.frombuffer(image_data, np.uint8)
+        uploaded_image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
+
+        template_obj = get_object_or_404(Document, id=document_id)
+        template_path = template_obj.image.path
+        template_image = cv2.imread(template_path, cv2.IMREAD_COLOR)
+        
+        registered_image = align_images(uploaded_image, template_image)
+        _, buffer = cv2.imencode('.png', registered_image)
+
+        encoded_image = base64.b64encode(buffer).decode("utf8")
+        
         data = {"images": [encoded_image]}
         with requests.Session() as session:
             response = session.post(
@@ -72,8 +86,8 @@ def document_prediction(request, document_id):
             return render(request, 'documentapp/document_prediction.html', context)
 
         predictions = response.json()["results"][0]
-
-        context["base64_document"] = base64_image
+        
+        context["base64_document"] = f"data:image/png;base64,{encoded_image}"
         context["predictions"] = predictions
     
     return render(request, 'documentapp/document_prediction.html', context)

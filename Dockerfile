@@ -5,8 +5,8 @@ WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpq-dev
+    build-essential libpq-dev \
+    ffmpeg libsm6 libxext6
 
 # Copy requirements.txt and install Python dependencies
 COPY requirements.txt /app/
