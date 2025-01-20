@@ -32,15 +32,17 @@
                 <table>
                     <thead>
                         <tr>
+                            <th>Field Name</th>
                             <th>Predicted Text</th>
                             <th>Confidence</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for prediction in predictions %}
+                        {% for prediction in predicted_boxes %}
                             <tr>
-                                <td>{{ prediction.text }}</td>
-                                <td>{{ prediction.confidence }}</td>
+                                <td>{{ prediction.box_name }}</td>
+                                <td>{{ prediction.detected_box_text }}</td>
+                                <td>{{ prediction.detected_box_text_confidence }}</td>
                             </tr>
                         {% empty %}
                             <tr>
