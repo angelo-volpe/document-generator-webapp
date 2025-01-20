@@ -94,8 +94,6 @@ def document_prediction(request, document_id):
         template_boxes = Box.objects.filter(document=document_id)
         template_boxes = BoxSerializer(template_boxes, many=True).data
 
-        logger.info(template_boxes)
-
         template_boxes = map(lambda x: {"box_name": x["name"], 
                                         "box_id": x["id"],
                                         "coords": get_box_coords(*denormalise_box_coordinates(x["start_x_norm"], x["start_y_norm"], 
@@ -144,6 +142,7 @@ class SampleDocumentListView(ListView):
     model = SampleDocument
     template_name = "documentapp/sample_document_list.html"
     context_object_name = "sample_documents"
+    paginate_by = 25
 
     def get_queryset(self):
         queryset = super().get_queryset()

@@ -8,11 +8,27 @@
 <body>
     <h1 style="text-align: center;">List of Sample Documents</h1>
     <ul>
-        {% for sample in sample_documents %}
-            <!-- Sample Name -->
+        {% for sample in page_obj %}
             <li><a href="{{ sample.image.url }}">{{ sample.name }}</a></li>
         {% endfor %}
     </ul>
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?template_document={{ request.GET.template_document }}&page=1">&laquo; first</a>
+                <a href="?template_document={{ request.GET.template_document }}&page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+    
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+    
+            {% if page_obj.has_next %}
+                <a href="?template_document={{ request.GET.template_document }}&page={{ page_obj.next_page_number }}">next</a>
+                <a href="?template_document={{ request.GET.template_document }}&page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
     <div>
         <a href="{% url 'documentapp:document_detail' request.GET.template_document %}">Back to Template Document</a>
     </div>
