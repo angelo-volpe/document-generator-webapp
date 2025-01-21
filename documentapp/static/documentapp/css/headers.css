@@ -1,0 +1,27 @@
+/* Style the header bar */
+.header-bar {
+    width: 100%; /* Full width */
+    display: flex; /* Enable flexbox */
+    background-color: #d75755; /* Red background */
+    color: white; /* White text */
+    padding: 10px 20px; /* Padding for space around text */
+    text-align: left; /* Center align the title */
+    position: sticky; /* Keep the bar at the top when scrolling */
+    top: 0; /* Position at the top */
+    z-index: 1000; /* Ensure it stays above other elements */
+    margin-bottom: 10px; /* Add space below the header */
+}
+
+/* Style the title */
+.header-bar h1 {
+    margin: 0; /* Remove default margin */
+    font-size: 24px; /* Set font size */
+    font-weight: bold; /* Make text bold */
+    line-height: 1.5; /* Adjust line height */
+}
+
+.header-icon {
+    height: 36px; /* Adjust image height */
+    width: auto; /* Maintain image aspect ratio */
+    margin-right: 15px; /* Space between image and text */
+}

@@ -2,8 +2,11 @@
 <html lang="en">
 
 {% load static %}
-<link rel="stylesheet" href="{% static 'documentapp/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'documentapp/css/splitted_screen.css' %}">
 <link rel="stylesheet" href="{% static 'documentapp/css/boxes.css' %}">
+<link rel="stylesheet" href="{% static 'documentapp/css/buttons.css' %}">
+<link rel="stylesheet" href="{% static 'documentapp/css/headers.css' %}">
+<link rel="stylesheet" href="{% static 'documentapp/css/globals.css' %}">
 
 <head>
     <meta charset="UTF-8" content="width=device-width, initial-scale=1">
@@ -18,7 +21,9 @@
         const deleteSamplesUrl = "{% url 'documentapp:sample-documents-delete-template-samples' %}"
         const CSRFToken = "{{ csrf_token }}"
     </script> 
-    <h1>Document Details</h1>
+    <header class="header-bar">
+        <h1>Document Details</h1>
+    </header>
     <div class="padded-boxes">
         <section>
             <h3 class="heading">{{ document.name }}</h3>
@@ -36,17 +41,14 @@
         </section>
     </div>
 
-    <div>
+    <div class="button-container">
         <br>
         <label for="numSamplesInput">Number of Samples:</label>
         <input type="text" id="numSamplesInput">
         <button id="generateSampleButton" data-document-id="{{ document.id }}" type="submit">Generate Sample</button>
-        <br><br>
-        <a href="{% url 'documentapp:sample_documents_list' %}?template_document={{ document.id }}">Document Samples</a>
-        <br><br>
-        <a href="{% url 'documentapp:document_prediction' document.id %}">Document Prediction</a>
-        <br><br>
-        <a href="{% url 'documentapp:document_list' %}">Back to Document List</a>
+        <a class="gray-button" href="{% url 'documentapp:sample_documents_list' %}?template_document={{ document.id }}">Document Samples</a>
+        <a class="gray-button" href="{% url 'documentapp:document_prediction' document.id %}">Document Prediction</a>
+        <a class="gray-button" href="{% url 'documentapp:document_list' %}">Back to Document List</a>
     </div>
     <script src="{% static 'documentapp/js/document_detail.js' %}"></script>
 </body>

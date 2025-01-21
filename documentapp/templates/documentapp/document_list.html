@@ -1,24 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'documentapp/css/buttons.css' %}">
+<link rel="stylesheet" href="{% static 'documentapp/css/lists.css' %}">
+<link rel="stylesheet" href="{% static 'documentapp/css/headers.css' %}">
+<link rel="stylesheet" href="{% static 'documentapp/css/globals.css' %}">
+
 <head>
     <meta charset="UTF-8">
-    <title>Documents</title>
+    <title>Documents App</title>
 </head>
 <body>
-    <h1>Documents</h1>
+    <header class="header-bar">
+        <img src="{% static 'documentapp/icons/logo.png' %}" alt="Document App" class="header-icon">
+        <h1>Documents App</h1>
+    </header>
+
+    <h2>Documents</h2>
     <ul>
         {% for document in documents %}
-            <!-- Document Name -->
-            <li><a href="{% url 'documentapp:document_detail' document.id %}">{{ document.name }}</a></li>
-            <!-- Delete button -->
-            <form action="{% url 'documentapp:delete_document' document.id %}" method="post" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit">Delete Document</button>
-            </form>
+            <li>
+                <div class="list-item">
+                    <!-- Document Name -->
+                    <a class="gray-button" href="{% url 'documentapp:document_detail' document.id %}">{{ document.name }}</a>
+                    <!-- Delete button -->
+                    <form action="{% url 'documentapp:delete_document' document.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button class="trash-btn" type="submit">
+                            <img src="{% static 'documentapp/icons/trash.png' %}" alt="Delete" />
+                        </button>
+                    </form>
+                </div>
+            </li>  
         {% endfor %}
+        <li >
+            <div class="list-item">
+                <!-- Document Name -->
+                <a class="white-button" href="{% url 'documentapp:add_document' %}">Add New Document</a>
+            </div>
+        </li>
     </ul>
-    <a href="{% url 'documentapp:add_document' %}">
-        <button>Add New Document</button>
-    </a>
 </body>
 </html>

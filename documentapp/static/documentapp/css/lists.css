@@ -1,0 +1,31 @@
+ul {
+    list-style-type: none; /* Remove default bullet points */
+    padding: 0;
+    text-align: left;
+}
+
+li {
+    width: 350px; /* Fixed width */
+    height: 50px; /* Fixed height */
+    margin: 10px; /* Add spacing between items and center them */
+}
+
+.list-item {
+    display: flex; /* Enable flexbox */
+    align-items: center; /* Vertically align items */
+    justify-content: space-between; /* Space items apart */
+}
+
+.trash-btn {
+    background: none;
+    border: none;
+    margin-right: 10px; 
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+}
+
+.trash-btn img {
+    width: 20px; /* Set icon size */
+    height: 20px;
+}

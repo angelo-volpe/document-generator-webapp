@@ -2,7 +2,10 @@
 <html lang="en">
 
 {% load static %}
-<link rel="stylesheet" href="{% static 'documentapp/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'documentapp/css/splitted_screen.css' %}">
+<link rel="stylesheet" href="{% static 'documentapp/css/globals.css' %}">
+<link rel="stylesheet" href="{% static 'documentapp/css/headers.css' %}">
+<link rel="stylesheet" href="{% static 'documentapp/css/buttons.css' %}">
 
 <head>
     <meta charset="UTF-8">
@@ -10,14 +13,16 @@
     <title>Image Upload</title>
 </head>
 <body>
-    <h1>Document Prediction</h1>
+    <header class="header-bar">
+        <h1>Document Prediction</h1>
+    </header>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <input type="file" name="image" accept="image/*" required>
-        <button type="submit">Predict</button>
+        <button class="gray-button" type="submit">Predict</button>
     </form>
     
-    <a href="{% url 'documentapp:document_detail' document_id %}">Back</a>
+    <a class="gray-button" href="{% url 'documentapp:document_detail' document_id %}">Back</a>
 
     {% if base64_document %}
     <div class="padded-boxes">
