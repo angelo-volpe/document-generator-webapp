@@ -29,11 +29,6 @@ AIRFLOW_PASSWORD = "airflow"
 
 
 def document_list(request):
-    documents = Document.objects.all()
-    return render(request, 'documentapp/document_list.html', {'documents': documents})
-
-
-def add_document(request):
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
@@ -41,7 +36,9 @@ def add_document(request):
             return redirect('documentapp:document_list')
     else:
         form = DocumentForm()
-    return render(request, 'documentapp/add_document.html', {'form': form})
+    
+    documents = Document.objects.all()
+    return render(request, 'documentapp/document_list.html', {'documents': documents, 'form': form})
 
 
 def document_detail(request, document_id):

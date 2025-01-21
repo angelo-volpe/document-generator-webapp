@@ -11,7 +11,7 @@
     font-weight: bold;
     color: #333; /* Dark text color */
     display: block; /* Make link fill the list item */
-    margin: 10px;
+    margin: 5px;
 }
 
 .gray-button:hover {
@@ -20,8 +20,8 @@
 }
 
 .white-button {
-    width: 300px; /* Fixed width */
-    height: 50px; /* Fixed height */
+    width: 298px; /* Fixed width */
+    height: 48px; /* Fixed height */
     line-height: 50px; /* Vertically center text */
     border-radius: 10px; /* Smooth corners */
     background-color: #ffffff; /* Light background color */
@@ -33,7 +33,7 @@
     color: #333; /* Dark text color */
     font-weight: bold;
     display: block; /* Make link fill the list item */
-    margin: 10px;
+    margin: 5px;
 }
 
 .white-button:hover {
@@ -44,5 +44,6 @@
 
 .button-container {
     display: flex; 
+    margin-top: 20px;
     gap: 10px; /* Space between buttons */
 }
