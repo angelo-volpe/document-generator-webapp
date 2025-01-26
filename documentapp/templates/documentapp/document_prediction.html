@@ -2,10 +2,11 @@
 <html lang="en">
 
 {% load static %}
-<link rel="stylesheet" href="{% static 'documentapp/css/splitted_screen.css' %}">
-<link rel="stylesheet" href="{% static 'documentapp/css/globals.css' %}">
-<link rel="stylesheet" href="{% static 'documentapp/css/headers.css' %}">
-<link rel="stylesheet" href="{% static 'documentapp/css/buttons.css' %}">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <head>
     <meta charset="UTF-8">
@@ -13,34 +14,43 @@
     <title>Image Upload</title>
 </head>
 <body>
-    <header class="header-bar">
-        <h1>Document Prediction</h1>
-    </header>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="file" name="image" accept="image/*" required>
-        <button class="gray-button" type="submit">Predict</button>
-    </form>
-    
-    <a class="gray-button" href="{% url 'documentapp:document_detail' document_id %}">Back</a>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <!-- Brand Name or Logo -->
+            <a class="navbar-brand" href="{% url 'documentapp:document_list' %}">
+                <img src="{% static 'documentapp/icons/logo.png' %}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+                Document App
+            </a>
+        </div>
+    </nav>
 
-    {% if base64_document %}
-    <div class="padded-boxes">
-        <section>
-            <div class="padded">
-                <img src="{{ base64_document }}" alt="Document with Predictions" style="max-width: 100%; height: auto;">
+    <h1>Document Prediction</h1>
+
+    <div class="container-fluid">
+        <div class="row">
+            <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#new-document-modal">
+                <i class="bi bi-plus-circle"></i>
+                New Document
+            </button>
+        </div>
+
+        <div class="row">
+            {% if base64_document %}
+            <div class="col-md-6">
+                <!-- Image container with drawing functionality -->
+                <div id="document-container">
+                    <img src="{{ base64_document }}" alt="Document" class="image">
+                </div>
             </div>
-        </section>
-        <section>
-            <h3 class="heading">Boxes</h3>
-            <div id="predicted-box-list">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Field Name</th>
-                            <th>Predicted Text</th>
-                            <th>Confidence</th>
-                        </tr>
+            <div class="col-md-4">
+                <h3 class="heading">Detected Boxes</h3>
+                <table class="table">
+                    <thead class="thead-dark">
+                      <tr>
+                        <th scope="col">Field Name</th>
+                        <th scope="col">Predicted Text</th>
+                        <th scope="col">Confidence</th>
+                      </tr>
                     </thead>
                     <tbody>
                         {% for prediction in predicted_boxes %}
@@ -55,11 +65,33 @@
                             </tr>
                         {% endfor %}
                     </tbody>
-                </table>
+                  </table>
             </div>
-        </section>
-    </div>
-    {% endif %}
+            {% endif %}
+        </div>
+    <a class="btn btn-primary btn-sm" href="{% url 'documentapp:document_detail' document_id %}">Back</a>
     
+    <div class="modal fade" id="new-document-modal" tabindex="-1" aria-labelledby="new-document" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="new-document">New Document</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="upload-form" method="post" enctype="multipart/form-data" action="{% url 'documentapp:document_prediction' document_id %}">
+                        <div id="form-content" class="form-group">
+                            {% csrf_token %}
+                            <input type="file" name="image" accept="image/*" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Predict</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

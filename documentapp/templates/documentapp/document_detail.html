@@ -2,11 +2,12 @@
 <html lang="en">
 
 {% load static %}
-<link rel="stylesheet" href="{% static 'documentapp/css/splitted_screen.css' %}">
-<link rel="stylesheet" href="{% static 'documentapp/css/boxes.css' %}">
-<link rel="stylesheet" href="{% static 'documentapp/css/buttons.css' %}">
-<link rel="stylesheet" href="{% static 'documentapp/css/headers.css' %}">
-<link rel="stylesheet" href="{% static 'documentapp/css/globals.css' %}">
+<link rel="stylesheet" href="{% static 'documentapp/css/style.css' %}">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <head>
     <meta charset="UTF-8" content="width=device-width, initial-scale=1">
@@ -21,35 +22,141 @@
         const deleteSamplesUrl = "{% url 'documentapp:sample-documents-delete-template-samples' %}"
         const CSRFToken = "{{ csrf_token }}"
     </script> 
-    <header class="header-bar">
-        <h1>Document Details</h1>
-    </header>
-    <div class="padded-boxes">
-        <section>
-            <h3 class="heading">{{ document.name }}</h3>
-            <div class="padded">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <!-- Brand Name or Logo -->
+            <a class="navbar-brand" href="{% url 'documentapp:document_list' %}">
+                <img src="{% static 'documentapp/icons/logo.png' %}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+                Document App
+            </a>
+        </div>
+    </nav>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
                 <!-- Image container with drawing functionality -->
                 <div id="document-container" class="document-container" data-document-id="{{ document.id }}">
                     <img src="{{ document.image.url }}" alt="{{ document.name }}" class="image">
                 </div>
             </div>
-        </section>
-        <section>
-            <h3 class="heading">Boxes</h3>
-            <div id="box-list-{{ document.id }}" class="accordion-container">       
+            <div class="col-md-4">
+                <h3 class="heading">Boxes</h3>
+                <div class="accordion" id="accordion-boxes">
+                    {% for box in boxes %}
+                        <div class="card">
+                            <div class="card-header" id="heading-{{ box.id }}">
+                                <h5 class="mb-0">
+                                    <button class="btn btn" type="button" data-toggle="collapse" data-target="#collapse-{{ box.id }}" aria-expanded="true" aria-controls="collapse-{{ box.id }}">
+                                        {{ box.name }}
+                                    </button>
+                                    <form id="delete-box-form" data-box-id="{{ box.id }}" style="display:inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </h5>
+                            </div>
+                            <div id="collapse-{{ box.id }}" class="collapse" aria-labelledby="heading-{{ box.id }}" data-parent="#accordion-boxes">
+                                <div class="card-body">
+                                    <form id="box-form" data-box-id="{{ box.id }}">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="is-numeric-{{ box.id }}" {% if box.is_numeric %}checked{% endif %}>
+                                            <label class="form-check-label" for="is-numeric-{{ box.id }}">Is Numeric</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="is-alphabetic-{{ box.id }}" {% if box.is_alphabetic %}checked{% endif %}>
+                                            <label class="form-check-label" for="is-alpahbetic-{{ box.id }}">Is Alphabetic</label>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="mean-length-{{ box.id }}">Mean Length</label>
+                                            <input type="text" class="form-control" id="mean-length-{{ box.id }}" value="{{ box.mean_length }}">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Update Box</button>
+                                      </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
-        </section>
+        </div>
+        <div class="row">
+            <div class="container mt-5">
+                <button id="generateSampleButton" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#generate-sample-modal">
+                    Generate Sample
+                </button>
+                <a class="btn btn-outline-primary btn-sm" href="{% url 'documentapp:sample_documents_list' %}?template_document={{ document.id }}">Document Samples</a>
+                <a class="btn btn-outline-primary btn-sm" href="{% url 'documentapp:document_prediction' document.id %}">Document Prediction</a>
+                <a class="btn btn-primary btn-sm" href="{% url 'documentapp:document_list' %}">Back to Document List</a>
+            </div>
+        </div>
+    
+
+    <!-- Modal for new box -->
+    <div class="modal fade" id="new-box-modal" tabindex="-1" aria-labelledby="new-box" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="new-box">New Box</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="new-box-form" enctype="multipart/form-data">
+                        <div class="form-group row">
+                            <label for="new-box-name">Box Name</label>
+                            <input type="text" class="form-control" id="new-box-name">
+                        </div>
+                        <div class="form-group row">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="new-box-is-numeric">
+                                <label class="form-check-label" for="new-box-is-numeric">Is Numeric</label>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="new-box-is-alphabetic">
+                                <label class="form-check-label" for="new-box-is-alpahbetic">Is Alphabetic</label>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new-box-mean-length">Mean Length</label>
+                            <input type="text" class="form-control" id="new-box-mean-length">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create Box</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="button-container">
-        <br>
-        <label for="numSamplesInput">Number of Samples:</label>
-        <input type="text" id="numSamplesInput">
-        <button id="generateSampleButton" data-document-id="{{ document.id }}" type="submit">Generate Sample</button>
-        <a class="gray-button" href="{% url 'documentapp:sample_documents_list' %}?template_document={{ document.id }}">Document Samples</a>
-        <a class="gray-button" href="{% url 'documentapp:document_prediction' document.id %}">Document Prediction</a>
-        <a class="gray-button" href="{% url 'documentapp:document_list' %}">Back to Document List</a>
+    <!-- Modal for generate sample -->
+    <div class="modal fade" id="generate-sample-modal" tabindex="-1" aria-labelledby="generate-sample" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="generate-sample">Generate Sample</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="generate-sample-form" enctype="multipart/form-data">
+                        <div class="form-group row">
+                            <label for="num-samples"># Samples</label>
+                            <input type="text" class="form-control" id="num-samples">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Generate Sample</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
+
     <script src="{% static 'documentapp/js/document_detail.js' %}"></script>
 </body>
 </html>

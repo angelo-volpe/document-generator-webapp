@@ -1,36 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
+
+{% load static %}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sample Documents</title>
 </head>
 <body>
-    <h1 style="text-align: center;">List of Sample Documents</h1>
-    <ul>
-        {% for sample in page_obj %}
-            <li><a href="{{ sample.image.url }}">{{ sample.name }}</a></li>
-        {% endfor %}
-    </ul>
-    <div class="pagination">
-        <span class="step-links">
-            {% if page_obj.has_previous %}
-                <a href="?template_document={{ request.GET.template_document }}&page=1">&laquo; first</a>
-                <a href="?template_document={{ request.GET.template_document }}&page={{ page_obj.previous_page_number }}">previous</a>
-            {% endif %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <!-- Brand Name or Logo -->
+            <a class="navbar-brand" href="{% url 'documentapp:document_list' %}">
+                <img src="{% static 'documentapp/icons/logo.png' %}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+                Document App
+            </a>
+        </div>
+    </nav>
+    <h1>
+        Samples List
+    </h1>
     
-            <span class="current">
-                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-            </span>
-    
-            {% if page_obj.has_next %}
-                <a href="?template_document={{ request.GET.template_document }}&page={{ page_obj.next_page_number }}">next</a>
-                <a href="?template_document={{ request.GET.template_document }}&page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
-            {% endif %}
-        </span>
+    <div class="container-fluid">
+        <div class="row p-2">
+            <div class="col-3 col-md-2 vh-10">
+                <ul class="list-group">
+                    {% for sample in page_obj %}
+                        <li class="list-group-item p-2">
+                            <!-- Document Name -->
+                            <a href="{{ sample.image.url }}" class="btn btn-sm p-0">
+                                {{ sample.name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
     </div>
+
+    <nav aria-label="Page navigation example">
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+                <li class="page-item {% if box.is_numeric %}disabled{% endif %}">
+                    <a class="page-link" href="?template_document={{ request.GET.template_document }}&page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
+            {% endif %}
+            {% if page_obj.has_next %}
+                <a class="page-link" href="?template_document={{ request.GET.template_document }}&page={{ page_obj.next_page_number }}">Next</a>
+            {% endif %}
+        </ul>
+    </nav>
     <div>
-        <a href="{% url 'documentapp:document_detail' request.GET.template_document %}">Back to Template Document</a>
+        <a class="btn btn-primary btn-sm" href="{% url 'documentapp:document_detail' request.GET.template_document %}">
+            Back to Template Document
+        </a>
     </div>
 </body>
 </html>

@@ -1,0 +1,23 @@
+.navbar-brand img {
+    margin-right: 10px; /* Space between logo and text */
+}
+
+.document-container {
+    position: relative;
+    width: 100%;
+    display: inline-block;
+}
+  
+.image {
+    display: block;
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+}
+
+.bounding-box {
+    position: absolute;
+    border: 2px solid rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+}

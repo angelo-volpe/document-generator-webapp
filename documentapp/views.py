@@ -85,7 +85,14 @@ def document_prediction(request, document_id):
             logger.error("model prediction failed")
             return render(request, 'documentapp/document_prediction.html', context)
 
-        predictions = response.json()["results"][0]
+        predictions = response.json()["results"]
+
+        if len(predictions) == 0:
+            context["base64_document"] = f"data:image/png;base64,{encoded_image}"
+            context["predicted_boxes"] = []
+            return render(request, 'documentapp/document_prediction.html', context)
+        
+        predictions = predictions[0]
 
         doc_height, doc_width = template_image.shape[:2]
         template_boxes = Box.objects.filter(document=document_id)
@@ -139,7 +146,7 @@ class SampleDocumentListView(ListView):
     model = SampleDocument
     template_name = "documentapp/sample_document_list.html"
     context_object_name = "sample_documents"
-    paginate_by = 25
+    paginate_by = 15
 
     def get_queryset(self):
         queryset = super().get_queryset()

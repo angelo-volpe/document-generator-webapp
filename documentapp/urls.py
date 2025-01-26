@@ -4,8 +4,8 @@ from . import views
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
-router.register('box', views.BoxViewSet)
-router.register('api/documents', views.DocumentViewSet)
+router.register('api/box', views.BoxViewSet, basename="box")
+router.register('api/documents', views.DocumentViewSet, basename="documents")
 router.register('api/sample_documents', views.SampleDocumentViewSet, basename="sample-documents")
 router.register('api/sample_boxes', views.SampleBoxViewSet, basename="sample-boxes")
 
