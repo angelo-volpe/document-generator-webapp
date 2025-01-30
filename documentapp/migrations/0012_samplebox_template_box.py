@@ -7,14 +7,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('documentapp', '0011_sampledocument_samplebox'),
+        ("documentapp", "0011_sampledocument_samplebox"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='samplebox',
-            name='template_box',
-            field=models.ForeignKey(default=0, on_delete=django.db.models.deletion.CASCADE, related_name='sample_box', to='documentapp.box'),
+            model_name="samplebox",
+            name="template_box",
+            field=models.ForeignKey(
+                default=0,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="sample_box",
+                to="documentapp.box",
+            ),
             preserve_default=False,
         ),
     ]

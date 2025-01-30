@@ -6,14 +6,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('documentapp', '0002_rename_item_document'),
+        ("documentapp", "0002_rename_item_document"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='document',
-            name='image',
-            field=models.ImageField(default='images/name-of-image.jpg', upload_to='images/'),
+            model_name="document",
+            name="image",
+            field=models.ImageField(
+                default="images/name-of-image.jpg", upload_to="images/"
+            ),
             preserve_default=False,
         ),
     ]

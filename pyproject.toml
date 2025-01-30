@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "document-generator-webapp"
+version = "0.1.0"
+description = ""
+authors = ["angelo-volpe <angelovolpe95@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+Django = "^5.1.2"
+djangorestframework = "^3.15.2"
+pillow = "^11.0.0"
+psycopg2 = "^2.9.10"
+requests = "^2.32.3"
+numpy = "^2.2.1"
+opencv-python = "^4.10.0.84"
+shapely = "^2.0.6"
+pandas = "^2.2.3"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.10.0"
+pytest = "^8.3.4"
+mypy = "^1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

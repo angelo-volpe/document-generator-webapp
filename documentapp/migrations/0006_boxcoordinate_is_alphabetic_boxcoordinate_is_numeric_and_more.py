@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('documentapp', '0005_boxcoordinate_name'),
+        ("documentapp", "0005_boxcoordinate_name"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='boxcoordinate',
-            name='is_alphabetic',
+            model_name="boxcoordinate",
+            name="is_alphabetic",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='boxcoordinate',
-            name='is_numeric',
+            model_name="boxcoordinate",
+            name="is_numeric",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='boxcoordinate',
-            name='mean_lenght',
+            model_name="boxcoordinate",
+            name="mean_lenght",
             field=models.IntegerField(default=0),
         ),
     ]

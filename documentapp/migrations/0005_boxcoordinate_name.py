@@ -6,14 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('documentapp', '0004_boxcoordinate'),
+        ("documentapp", "0004_boxcoordinate"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='boxcoordinate',
-            name='name',
-            field=models.CharField(default='Old Box', max_length=100),
+            model_name="boxcoordinate",
+            name="name",
+            field=models.CharField(default="Old Box", max_length=100),
             preserve_default=False,
         ),
     ]

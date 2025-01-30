@@ -7,13 +7,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('documentapp', '0012_samplebox_template_box'),
+        ("documentapp", "0012_samplebox_template_box"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='sampledocument',
-            name='template_document',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='samples', to='documentapp.document'),
+            model_name="sampledocument",
+            name="template_document",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="samples",
+                to="documentapp.document",
+            ),
         ),
     ]

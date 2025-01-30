@@ -6,47 +6,47 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('documentapp', '0009_rename_mean_lenght_box_mean_length_and_more'),
+        ("documentapp", "0009_rename_mean_lenght_box_mean_length_and_more"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='box',
-            name='end_x',
+            model_name="box",
+            name="end_x",
         ),
         migrations.RemoveField(
-            model_name='box',
-            name='end_y',
+            model_name="box",
+            name="end_y",
         ),
         migrations.RemoveField(
-            model_name='box',
-            name='start_x',
+            model_name="box",
+            name="start_x",
         ),
         migrations.RemoveField(
-            model_name='box',
-            name='start_y',
+            model_name="box",
+            name="start_y",
         ),
         migrations.AddField(
-            model_name='box',
-            name='end_x_norm',
+            model_name="box",
+            name="end_x_norm",
             field=models.FloatField(default=0.0),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='box',
-            name='end_y_norm',
+            model_name="box",
+            name="end_y_norm",
             field=models.FloatField(default=0.0),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='box',
-            name='start_x_norm',
+            model_name="box",
+            name="start_x_norm",
             field=models.FloatField(default=0.0),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='box',
-            name='start_y_norm',
+            model_name="box",
+            name="start_y_norm",
             field=models.FloatField(default=0.0),
             preserve_default=False,
         ),
