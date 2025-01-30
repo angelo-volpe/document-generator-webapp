@@ -53,16 +53,16 @@ function deleteSamples(documentId) {
 }
 
 
-async function triggerGenerateSampleDAG(documentId, numSamples) {
+async function triggerGenerateSamplingJob(documentId, numSamples) {
     try {
-        const response = await fetch(triggerSamplingDAGUrl, {
+        const response = await fetch(triggerSamplingJobUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRFToken": CSRFToken
             },
             body: JSON.stringify({
-                conf: {
+                job_args: {
                     "document_id": documentId,
                     "num_samples": numSamples
                 }
@@ -71,14 +71,14 @@ async function triggerGenerateSampleDAG(documentId, numSamples) {
 
         if (response.ok) {
             const data = await response.json();
-            alert(`DAG triggered successfully! Run ID: ${data.dag_run_id}`);
+            alert(`DAG triggered successfully! Job ID: ${data.job_id}`);
         } else {
             const error = await response.json();
-            alert(`Error: ${error.error || "Failed to trigger DAG"}`);
+            alert(`Error: ${error.error || "Failed to trigger Job"}`);
         }
     } catch (error) {
         console.error("Network error:", error);
-        alert("Failed to trigger DAG due to a network error.");
+        alert("Failed to trigger Job due to a network error.");
     }
 }
 
@@ -270,5 +270,5 @@ generateSampleForm.addEventListener("submit", function(event) {
     const numSamples = generateSampleForm.querySelector("#num-samples").value;
     console.info(numSamples);
     deleteSamples(documentId)
-    triggerGenerateSampleDAG(documentId, numSamples);
+    triggerGenerateSamplingJob(documentId, numSamples);
 });

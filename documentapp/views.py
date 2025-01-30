@@ -6,7 +6,6 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 
-from requests.auth import HTTPBasicAuth
 import json
 import base64
 import requests
@@ -21,11 +20,7 @@ from .models import *
 from .forms import DocumentForm
 from .logging_config import logger
 from .image_utils import align_images, denormalise_box_coordinates, get_box_coords
-
-
-AIRFLOW_API_URL = "http://airflow-webserver:8080/api/v1/dags"
-AIRFLOW_USER = "airflow"
-AIRFLOW_PASSWORD = "airflow"
+from .jobs import JobType, AirflowJobs
 
 
 def document_list(request):
@@ -185,27 +180,17 @@ class SampleDocumentListView(ListView):
 
 
 ## Jobs API
-def trigger_sampling_dag(request):
+def trigger_sampling_job(request):
     if request.method == "POST":
         try:
-            dag_id = "generate_document_samples"
             data = json.loads(request.body)
-            conf = data.get("conf", {})
 
-            url = f"{AIRFLOW_API_URL}/{dag_id}/dagRuns"
+            jobs = AirflowJobs()
+            job_id = jobs.run_job(JobType.SAMPLE_GENERATION, data["job_args"])
 
-            with requests.Session() as session:
-                response = session.post(
-                    url,
-                    json={"conf": conf},
-                    auth=HTTPBasicAuth(AIRFLOW_USER, AIRFLOW_PASSWORD),
-                    timeout=10,
-                )
-            return JsonResponse(response.json(), status=response.status_code)
+            return JsonResponse({"job_id": job_id}, status=200)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
-
-    return JsonResponse({"error": "Invalid request method"}, status=405)
 
 
 ### REST API

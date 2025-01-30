@@ -29,7 +29,7 @@ urlpatterns = [
         name="sample_documents_list",
     ),
     path(
-        "trigger_sampling_dag/", views.trigger_sampling_dag, name="trigger_sampling_dag"
+        "trigger_sampling_job/", views.trigger_sampling_job, name="trigger_sampling_job"
     ),
     path("", include(router.urls)),
 ]
