@@ -50,13 +50,6 @@ def document_detail(request, document_id):
     )
 
 
-def delete_document(request, document_id):
-    document = get_object_or_404(Document, id=document_id)
-    if request.method == "POST":
-        document.delete()
-    return redirect("documentapp:document_list")
-
-
 def document_prediction(request, document_id):
     context = {"document_id": document_id}
 
@@ -154,15 +147,6 @@ def document_prediction(request, document_id):
     return render(request, "documentapp/document_prediction.html", context)
 
 
-def get_document_boxes(request, document_id):
-    if request.method == "GET":
-        document = get_object_or_404(Document, id=document_id)
-        box_list = document.box.all()
-        data = BoxSerializer(box_list, many=True).data
-
-        return JsonResponse(data, safe=False)
-
-
 class SampleDocumentListView(ListView):
     model = SampleDocument
     template_name = "documentapp/sample_document_list.html"
@@ -206,7 +190,11 @@ class BoxViewSet(
     lookup_field = "id"
 
 
-class DocumentViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
+class DocumentViewSet(
+    viewsets.GenericViewSet, 
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin
+):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
     lookup_field = "id"
@@ -222,10 +210,23 @@ class DocumentViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
         samples = document.samples.all()
         serializer = SampleDocumentSerializer(samples, many=True)
         return Response(serializer.data)
+    
+    def get_boxes(self, request, id=None):
+        try:
+            document = self.get_object()
+        except Document.DoesNotExist:
+            return Response(
+                {"error": "Document not found."}, status=status.HTTP_404_NOT_FOUND
+            )
+        boxes = document.box.all()
+        serializer = BoxSerializer(boxes, many=True)
+        return Response(serializer.data)
 
 
 class SampleDocumentViewSet(
-    viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.CreateModelMixin
+    viewsets.GenericViewSet, 
+    mixins.RetrieveModelMixin, 
+    mixins.CreateModelMixin
 ):
     queryset = SampleDocument.objects.all()
     serializer_class = SampleDocumentSerializer
