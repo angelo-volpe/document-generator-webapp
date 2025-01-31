@@ -1,0 +1,6 @@
+[run]
+source = documentapp
+omit =
+    documentapp/migrations/*
+    documentapp/tests/*
+    documentapp/settings/*
