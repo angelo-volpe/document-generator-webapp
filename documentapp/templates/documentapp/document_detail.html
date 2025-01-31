@@ -19,6 +19,7 @@
         const BoxDetailUrl = "{% url 'documentapp:box-detail' id=1 %}"
         const BoxListUrl = "{% url 'documentapp:box-list' %}"
         const triggerSamplingJobUrl = "{% url 'documentapp:trigger_sampling_job' %}"
+        const triggerModelFineTuningJobUrl = "{% url 'documentapp:trigger_model_fine_tuning_job' %}"
         const deleteSamplesUrl = "{% url 'documentapp:sample-documents-delete-template-samples' %}"
         const CSRFToken = "{{ csrf_token }}"
     </script> 
@@ -89,6 +90,7 @@
                 </button>
                 <a class="btn btn-outline-primary btn-sm" href="{% url 'documentapp:sample_documents_list' %}?template_document={{ document.id }}">Document Samples</a>
                 <a class="btn btn-outline-primary btn-sm" href="{% url 'documentapp:document_prediction' document.id %}">Document Prediction</a>
+                <button class="btn btn-outline-primary btn-sm" onclick="triggerModelFineTuningJob('{{ document.id }}')">Train Model</button>
                 <a class="btn btn-primary btn-sm" href="{% url 'documentapp:document_list' %}">Back to Document List</a>
             </div>
         </div>

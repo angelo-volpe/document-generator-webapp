@@ -1,15 +1,16 @@
 from django.urls import path, include
 from . import views
+from . import api
 
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
-router.register("api/box", views.BoxViewSet, basename="box")
-router.register("api/documents", views.DocumentViewSet, basename="documents")
+router.register("api/box", api.BoxViewSet, basename="box")
+router.register("api/documents", api.DocumentViewSet, basename="documents")
 router.register(
-    "api/sample_documents", views.SampleDocumentViewSet, basename="sample-documents"
+    "api/sample_documents", api.SampleDocumentViewSet, basename="sample-documents"
 )
-router.register("api/sample_boxes", views.SampleBoxViewSet, basename="sample-boxes")
+router.register("api/sample_boxes", api.SampleBoxViewSet, basename="sample-boxes")
 
 app_name = "documentapp"
 
@@ -27,7 +28,10 @@ urlpatterns = [
         name="sample_documents_list",
     ),
     path(
-        "trigger_sampling_job/", views.trigger_sampling_job, name="trigger_sampling_job"
+        "trigger_sampling_job/", api.trigger_sampling_job, name="trigger_sampling_job"
+    ),
+    path(
+        "trigger_model_fine_tuning_job/", api.trigger_model_fine_tuning_job, name="trigger_model_fine_tuning_job"
     ),
     path("", include(router.urls)),
 ]

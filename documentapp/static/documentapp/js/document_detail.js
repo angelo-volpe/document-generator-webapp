@@ -82,6 +82,33 @@ async function triggerGenerateSamplingJob(documentId, numSamples) {
     }
 }
 
+async function triggerModelFineTuningJob(documentId) {
+    try {
+        const response = await fetch(triggerModelFineTuningJobUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": CSRFToken
+            },
+            body: JSON.stringify({
+                job_args: {
+                    "document_id": documentId                }
+            }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            alert(`DAG triggered successfully! Job ID: ${data.job_id}`);
+        } else {
+            const error = await response.json();
+            alert(`Error: ${error.error || "Failed to trigger Job"}`);
+        }
+    } catch (error) {
+        console.error("Network error:", error);
+        alert("Failed to trigger Job due to a network error.");
+    }
+}
+
 
 function normaliseBoxCoordinates(startX, startY, endX, endY) {
     docWidth = documentContainer.clientWidth;
