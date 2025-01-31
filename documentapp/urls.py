@@ -21,8 +21,6 @@ urlpatterns = [
         views.document_prediction,
         name="document_prediction",
     ),
-    path("<int:document_id>/delete/", views.delete_document, name="delete_document"),
-    path("<int:document_id>/boxes", views.get_document_boxes, name="get_boxes"),
     path(
         "sample_documents/",
         views.SampleDocumentListView.as_view(),
