@@ -71,6 +71,7 @@ class DocumentViewSet(
         serializer = SampleDocumentSerializer(samples, many=True)
         return Response(serializer.data)
 
+    @action(detail=True, methods=["get"])
     def get_boxes(self, request, id=None):
         try:
             document = self.get_object()

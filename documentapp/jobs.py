@@ -36,6 +36,21 @@ class AirflowJobs(Jobs):
         self.airflow_user = os.environ.get("AIRFLOW_USER")
         self.airflow_password = os.environ.get("AIRFLOW_PASSWORD")
 
+    def __run_airflow_job(self, dag_id: str, conf: dict):
+        url = f"{self.airflow_api_url}/{dag_id}/dagRuns"
+        with requests.Session() as session:
+            response = session.post(
+                url,
+                json=conf,
+                auth=HTTPBasicAuth(self.airflow_user, self.airflow_password),
+                timeout=10,
+            )
+
+        if response.status_code == 200:
+            return response.json()["dag_run_id"]
+        else:
+            raise Exception(f"Failed to trigger job: {response.text}")
+
     def _run_sampling_job(self, job_args: dict):
         if "document_id" not in job_args or "num_samples" not in job_args:
             raise ValueError(
@@ -45,7 +60,6 @@ class AirflowJobs(Jobs):
         sampling_dag_id = os.environ.get(
             "SAMPLING_DAG_ID", "generate_document_samples"
         )
-        url = f"{self.airflow_api_url}/{sampling_dag_id}/dagRuns"
         conf = {
             "conf": {
                 "document_id": job_args.get("document_id"),
@@ -53,21 +67,9 @@ class AirflowJobs(Jobs):
             }
         }
 
-        with requests.Session() as session:
-            response = session.post(
-                url,
-                json=conf,
-                auth=HTTPBasicAuth(self.airflow_user, self.airflow_password),
-                timeout=10,
-            )
+        self.__run_airflow_job(sampling_dag_id, conf)
 
-        if response.status_code == 200:
-            return response.json()["dag_run_id"]
-        else:
-            raise Exception(
-                f"Failed to trigger sample generation job: {response.text}"
-            )
-        
+    
     def _run_fine_tuning_job(self, job_args: dict):
         if "document_id" not in job_args:
             raise ValueError(
@@ -77,25 +79,10 @@ class AirflowJobs(Jobs):
         fine_tuning_dag_id = os.environ.get(
             "MODEL_FINE_TUNING_DAG_ID", "model_training"
         )
-
-        url = f"{self.airflow_api_url}/{fine_tuning_dag_id}/dagRuns"
         conf = {
             "conf": {
                 "document_id": job_args.get("document_id"),
             }
         }
 
-        with requests.Session() as session:
-            response = session.post(
-                url,
-                json=conf,
-                auth=HTTPBasicAuth(self.airflow_user, self.airflow_password),
-                timeout=10,
-            )
-
-        if response.status_code == 200:
-            return response.json()["dag_run_id"]
-        else:
-            raise Exception(
-                f"Failed to trigger fine tuning job: {response.text}"
-            )
+        self.__run_airflow_job(fine_tuning_dag_id, conf)
