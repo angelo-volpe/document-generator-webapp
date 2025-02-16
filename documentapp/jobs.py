@@ -17,9 +17,9 @@ class Jobs(ABC):
 
         elif job_type == JobType.MODEL_FINE_TUNING:
             run_id = self._run_fine_tuning_job(job_args)
-        
+
         return run_id
-    
+
     @abstractmethod
     def _run_sampling_job(self, job_args: dict):
         pass
@@ -57,9 +57,7 @@ class AirflowJobs(Jobs):
                 "document_id and num_samples are required for sample generation job"
             )
 
-        sampling_dag_id = os.environ.get(
-            "SAMPLING_DAG_ID", "generate_document_samples"
-        )
+        sampling_dag_id = os.environ.get("SAMPLING_DAG_ID", "generate_document_samples")
         conf = {
             "conf": {
                 "document_id": job_args.get("document_id"),
@@ -69,13 +67,10 @@ class AirflowJobs(Jobs):
 
         self.__run_airflow_job(sampling_dag_id, conf)
 
-    
     def _run_fine_tuning_job(self, job_args: dict):
         if "document_id" not in job_args:
-            raise ValueError(
-                "document_id is required for model fine tuning job"
-            )
-        
+            raise ValueError("document_id is required for model fine tuning job")
+
         fine_tuning_dag_id = os.environ.get(
             "MODEL_FINE_TUNING_DAG_ID", "model_training"
         )

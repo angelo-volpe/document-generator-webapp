@@ -31,7 +31,9 @@ urlpatterns = [
         "trigger_sampling_job/", api.trigger_sampling_job, name="trigger_sampling_job"
     ),
     path(
-        "trigger_model_fine_tuning_job/", api.trigger_model_fine_tuning_job, name="trigger_model_fine_tuning_job"
+        "trigger_model_fine_tuning_job/",
+        api.trigger_model_fine_tuning_job,
+        name="trigger_model_fine_tuning_job",
     ),
     path("", include(router.urls)),
 ]
