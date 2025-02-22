@@ -22,8 +22,10 @@ RUN python3 -m venv $POETRY_VENV \
 # Add `poetry` to PATH
 ENV PATH="${PATH}:${POETRY_VENV}/bin"
 
-COPY poetry.lock pyproject.toml /app/
-RUN poetry install
-
 # Copy the application code into the container
-COPY . /app/
+COPY documentapp /app/documentapp
+COPY mysite /app/mysite
+COPY manage.py /app/manage.py
+COPY poetry.lock pyproject.toml /app/
+
+RUN poetry install

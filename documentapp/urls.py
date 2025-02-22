@@ -1,8 +1,9 @@
-from django.urls import path, include
+from django.urls import path, include, reverse_lazy
 from . import views
 from . import api
 
 from rest_framework.routers import DefaultRouter
+from drf_spectacular.views import SpectacularSwaggerView, SpectacularAPIView
 
 router = DefaultRouter()
 router.register("api/box", api.BoxViewSet, basename="box")
@@ -34,6 +35,12 @@ urlpatterns = [
         "trigger_model_fine_tuning_job/",
         api.trigger_model_fine_tuning_job,
         name="trigger_model_fine_tuning_job",
+    ),
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path(
+        "api/docs/",
+        SpectacularSwaggerView.as_view(url_name="documentapp:schema"),
+        name="swagger-ui",
     ),
     path("", include(router.urls)),
 ]

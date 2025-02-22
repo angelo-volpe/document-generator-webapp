@@ -8,7 +8,7 @@ Then you can run it with the following commands:
 
    docker compose up
 
-[Only firs time] Initialise the database:
+[Only first time] Initialise the database:
 
 .. code-block:: bash
 

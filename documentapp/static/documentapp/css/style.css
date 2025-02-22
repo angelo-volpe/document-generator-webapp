@@ -4,7 +4,8 @@
 
 .document-container {
     position: relative;
-    width: 100%;
+    margin: auto;
+    width: 65%;
     display: inline-block;
 }
   

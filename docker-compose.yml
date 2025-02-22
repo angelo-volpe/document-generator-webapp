@@ -1,9 +1,11 @@
 services:
   document_app:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: poetry run python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/app
+      - ./documentapp:/app/documentapp
+      - ./mysite:/app/mysite
+      - ./media:/app/media
     ports:
       - "8000:8000"
     env_file:
