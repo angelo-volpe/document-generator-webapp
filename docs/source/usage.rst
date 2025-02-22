@@ -11,7 +11,7 @@ From the main page, click on the `New Document` button to upload a new document.
 .. image:: _static/main_page.png
    :alt: Main Page
    :align: center
-   :width: 400px
+   :width: 600px
 
 Choose the document file and name and click on the `Upload` button.
 
@@ -33,7 +33,7 @@ This page allows you to do various operations on the document:
 .. image:: _static/document_detail.png
    :alt: Document Detail Page
    :align: center
-   :width: 400px
+   :width: 600px
 
 
 Document Prediction Page
@@ -44,4 +44,4 @@ This page allows you to upload a document image and run the fine tuned OCR to pr
 .. image:: _static/prediction_page.png
    :alt: Document Prediction Page
    :align: center
-   :width: 400px
+   :width: 600px
