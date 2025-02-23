@@ -65,7 +65,7 @@ class AirflowJobs(Jobs):
             }
         }
 
-        self.__run_airflow_job(sampling_dag_id, conf)
+        return self.__run_airflow_job(sampling_dag_id, conf)
 
     def _run_fine_tuning_job(self, job_args: dict):
         if "document_id" not in job_args:
@@ -80,4 +80,4 @@ class AirflowJobs(Jobs):
             }
         }
 
-        self.__run_airflow_job(fine_tuning_dag_id, conf)
+        return self.__run_airflow_job(fine_tuning_dag_id, conf)

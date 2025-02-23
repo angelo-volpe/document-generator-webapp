@@ -13,3 +13,5 @@ Document App documentation
    Installation and Run <installation>
    Usage <usage>
    API <api>
+   Architecture <architecture>
+   Code Documentation <code_documentation>
