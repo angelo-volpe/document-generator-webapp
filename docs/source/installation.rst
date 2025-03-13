@@ -26,6 +26,7 @@ To deploy the job services, you need to clone the `document-generator-jobs <http
 repository and run the following commands inside:
 
 .. code-block:: bash
+    
     # Build the docker image for jobs
     docker build . -t document-generator-jobs:latest
 
@@ -39,8 +40,4 @@ Model Services
 To deploy the model services, you need to clone the `PaddleOCR <https://github.com/angelo-volpe/PaddleOCR>`_
 repository.
 
-Then you can build the docker image needed for training with the following command:
-.. code-block:: bash
-    docker build -f ./document_app_docker/Dockerfile_training -t paddle-ocr-document:latest .
-
-And once a new model is ready you deploy it using the following command:
+In the repo follow document_app/README.md instructions to fine tune and deploy the model.

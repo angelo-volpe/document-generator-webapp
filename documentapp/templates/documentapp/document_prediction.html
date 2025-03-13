@@ -2,6 +2,7 @@
 <html lang="en">
 
 {% load static %}
+<link rel="stylesheet" href="{% static 'documentapp/css/style.css' %}">
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -38,8 +39,7 @@
         <div class="row">
             {% if base64_document %}
             <div class="col-md-6">
-                <!-- Image container with drawing functionality -->
-                <div id="document-container">
+                <div id="document-container" class="document-container">
                     <img src="{{ base64_document }}" alt="Document" class="image">
                 </div>
             </div>

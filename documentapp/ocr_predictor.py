@@ -13,10 +13,11 @@ class OCRPredictor(ABC):
 
 class PaddleAPIOCRPredictor(OCRPredictor):
     def __init__(self, document_id: int):
-        self.api_url = f"{os.environ.get("PADDLE_OCR_HOST")}/predict/ocr_system_document_{document_id}"
+        self.api_url = f"{os.environ.get("PADDLE_OCR_HOST")}/predict/ocr_system"
 
     def predict(self, image) -> str:
         data = {"images": [image]}
+        logger.debug(f"making request to {self.api_url}")
         with requests.Session() as session:
             response = session.post(
                 self.api_url,
