@@ -8,6 +8,7 @@ from .models import *
 from .forms import DocumentForm
 from .document_processor import DocumentProcessor
 from .ocr_predictor import PaddleAPIOCRPredictor
+from .logging_config import logger
 
 
 def document_list(request):
@@ -63,13 +64,14 @@ def document_prediction(request, document_id):
 
         image_processor.process_document()
 
+        predicted_boxes = image_processor.detected_boxes_df.to_dict(orient="records")
+        logger.debug(f"predictions: {predicted_boxes}")
+
         context["base64_document"] = (
             f"data:image/png;base64,{image_processor.encoded_image}"
         )
 
-        context["predicted_boxes"] = image_processor.detected_boxes_df.to_dict(
-            orient="records"
-        )
+        context["predicted_boxes"] = predicted_boxes
 
     return render(request, "documentapp/document_prediction.html", context)
 

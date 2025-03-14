@@ -41,6 +41,47 @@
             <div class="col-md-6">
                 <div id="document-container" class="document-container">
                     <img src="{{ base64_document }}" alt="Document" class="image">
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                          const predictedBoxes = {{ predicted_boxes | safe }};
+                          drawBoxes(predictedBoxes);
+                        });
+
+                        function drawBoxes(predictions) {
+                            const container = document.getElementById('document-container');
+                            docWidth = container.clientWidth;
+                            docHeight = container.clientHeight;
+                            
+                            predictions.forEach(prediction => {
+                                // Create SVG element
+                                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                                svg.style.position = 'absolute';
+                                svg.style.left = '0';
+                                svg.style.top = '0';
+                                svg.style.width = '100%';
+                                svg.style.height = '100%';
+                                svg.style.pointerEvents = 'none';
+                                
+                                // Create polygon with the coordinates
+                                const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                                
+                                // Format points for SVG polygon
+                                const points = prediction.coords_norm.map(point => 
+                                    `${parseInt(point[0] * docWidth)},${parseInt(point[1] * docHeight)}`).join(' ');
+                                console.log(points);
+                                polygon.setAttribute('points', points);
+                                polygon.style.fill = 'transparent';
+                                polygon.style.stroke = 'red';
+                                polygon.style.strokeWidth = '2';
+                                
+                                // Append polygon to SVG
+                                svg.appendChild(polygon);
+                                
+                                // Append SVG to container
+                                container.appendChild(svg);
+                            });
+                        }
+                      </script>
                 </div>
             </div>
             <div class="col-md-4">
