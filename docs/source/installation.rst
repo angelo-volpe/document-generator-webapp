@@ -4,7 +4,7 @@ To install and run Document App, you need to have Docker and Docker Compose inst
 
 Frontend
 --------
-To deploy the forntend clone the `document-generator-webapp <https://github.com/angelo-volpe/document-generator-webapp>` and run the following commands inside the project:
+To deploy the forntend clone the `document-generator-webapp <https://github.com/angelo-volpe/document-generator-webapp>`_ and run the following commands inside the project:
 
 .. code-block:: bash
 

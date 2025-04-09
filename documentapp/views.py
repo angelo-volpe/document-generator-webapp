@@ -74,12 +74,20 @@ def document_prediction(request, document_id):
         logger.debug(template_boxes)
 
         context["predicted_boxes"] = predicted_boxes
-                
-        context["template_boxes"] = list(map(lambda x: {"coords_norm": [[x["start_x_norm"], x["start_y_norm"]], 
-                                                                        [x["end_x_norm"], x["start_y_norm"]], 
-                                                                        [x["end_x_norm"], x["end_y_norm"]], 
-                                                                        [x["start_x_norm"], x["end_y_norm"]]]}, 
-                                            template_boxes))
+
+        context["template_boxes"] = list(
+            map(
+                lambda x: {
+                    "coords_norm": [
+                        [x["start_x_norm"], x["start_y_norm"]],
+                        [x["end_x_norm"], x["start_y_norm"]],
+                        [x["end_x_norm"], x["end_y_norm"]],
+                        [x["start_x_norm"], x["end_y_norm"]],
+                    ]
+                },
+                template_boxes,
+            )
+        )
 
     return render(request, "documentapp/document_prediction.html", context)
 

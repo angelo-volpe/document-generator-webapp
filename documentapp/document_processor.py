@@ -91,7 +91,12 @@ class DocumentProcessor:
                         "detected_box_text_confidence": prediction["confidence"],
                         "intersection_recall": intersection_area / label_area,
                         "intersection_precision": intersection_area / pred_area,
-                        "coords_norm": list(map(lambda x: [x[0] / doc_width, x[1]/ doc_height], prediction["text_region"])),
+                        "coords_norm": list(
+                            map(
+                                lambda x: [x[0] / doc_width, x[1] / doc_height],
+                                prediction["text_region"],
+                            )
+                        ),
                     }
                 )
 
