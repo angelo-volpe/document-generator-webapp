@@ -44,10 +44,12 @@
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
                           const predictedBoxes = {{ predicted_boxes | safe }};
-                          drawBoxes(predictedBoxes);
+                          const templateBoxes = {{ template_boxes | safe }};
+                          drawBoxes(predictedBoxes, 'red');
+                          drawBoxes(templateBoxes, 'black');
                         });
 
-                        function drawBoxes(predictions) {
+                        function drawBoxes(predictions, color) {
                             const container = document.getElementById('document-container');
                             docWidth = container.clientWidth;
                             docHeight = container.clientHeight;
@@ -71,7 +73,7 @@
                                 console.log(points);
                                 polygon.setAttribute('points', points);
                                 polygon.style.fill = 'transparent';
-                                polygon.style.stroke = 'red';
+                                polygon.style.stroke = color;
                                 polygon.style.strokeWidth = '2';
                                 
                                 // Append polygon to SVG
