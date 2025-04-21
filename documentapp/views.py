@@ -7,8 +7,8 @@ import cv2
 from .models import *
 from .forms import DocumentForm
 from .document_processor import DocumentProcessor
-from .ocr_predictor import PaddleAPIOCRPredictor
 from .logging_config import logger
+from .config import get_ocr_predictor
 
 
 def document_list(request):
@@ -59,7 +59,7 @@ def document_prediction(request, document_id):
             template_image,
             uploaded_image,
             template_boxes,
-            PaddleAPIOCRPredictor(document_id=document_id),
+            ocr_predictor=get_ocr_predictor(),
         )
 
         image_processor.process_document()

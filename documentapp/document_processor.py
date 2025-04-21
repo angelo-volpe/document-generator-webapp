@@ -75,7 +75,7 @@ class DocumentProcessor:
 
         colliding_boxes = []
         for prediction, label_box in product(self.__predictions, template_boxes):
-            pred_poly = Polygon(prediction["text_region"])
+            pred_poly = Polygon(prediction.text_region)
             label_poly = Polygon(label_box["coords"])
 
             pred_area = pred_poly.area
@@ -87,14 +87,14 @@ class DocumentProcessor:
                     {
                         "box_id": label_box["box_id"],
                         "box_name": label_box["box_name"],
-                        "detected_box_text": prediction["text"],
-                        "detected_box_text_confidence": prediction["confidence"],
+                        "detected_box_text": prediction.text,
+                        "detected_box_text_confidence": prediction.confidence,
                         "intersection_recall": intersection_area / label_area,
                         "intersection_precision": intersection_area / pred_area,
                         "coords_norm": list(
                             map(
                                 lambda x: [x[0] / doc_width, x[1] / doc_height],
-                                prediction["text_region"],
+                                prediction.text_region,
                             )
                         ),
                     }
@@ -129,5 +129,6 @@ class DocumentProcessor:
 
         self.__predictions = self.ocr_predictor.predict(self.encoded_image)
 
+        # TODO this part can be not necessary or different for some predictors returning classes
         self.__tag_boxes()
         return
