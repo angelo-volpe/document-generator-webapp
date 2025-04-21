@@ -2,6 +2,8 @@ import unittest
 from unittest.mock import MagicMock, patch
 import numpy as np
 import pandas as pd
+
+from ..ocr_predictor import PredictedBox, TextRegion
 from ..document_processor import DocumentProcessor
 
 
@@ -21,11 +23,16 @@ class TestDocumentProcessor(unittest.TestCase):
         ]
         self.ocr_predictor = MagicMock()
         self.ocr_predictor.predict.return_value = [
-            {
-                "text_region": [(10, 10), (50, 10), (50, 50), (10, 50)],
-                "text": "sample text",
-                "confidence": 0.95,
-            }
+            PredictedBox(
+                text_region=TextRegion(
+                    p1=(10, 10),
+                    p2=(50, 10),
+                    p3=(50, 50),
+                    p4=(10, 50),
+                ),
+                text="sample text",
+                confidence=0.95,
+            )
         ]
         self.processor = DocumentProcessor(
             self.template, self.document, self.template_boxes, self.ocr_predictor
@@ -53,11 +60,16 @@ class TestDocumentProcessor(unittest.TestCase):
 
     def test_tag_boxes(self):
         self.processor._DocumentProcessor__predictions = [
-            {
-                "text_region": [(10, 10), (50, 10), (50, 50), (10, 50)],
-                "text": "sample text",
-                "confidence": 0.95,
-            }
+            PredictedBox(
+                text_region=TextRegion(
+                    p1=(10, 10),
+                    p2=(50, 10),
+                    p3=(50, 50),
+                    p4=(10, 50),
+                ),
+                text="sample text",
+                confidence=0.95,
+            )
         ]
         self.processor._DocumentProcessor__tag_boxes()
         self.assertFalse(self.processor.detected_boxes_df.empty)

@@ -60,9 +60,9 @@ class PaddleAPIOCRPredictor(OCRPredictor):
            predicted_box = PredictedBox(
                text_region=TextRegion(
                     p1=tuple(prediction["text_region"][0]),
-                    p2=tuple(prediction["text_region"][0]),
+                    p2=tuple(prediction["text_region"][1]),
                     p3=tuple(prediction["text_region"][2]),
-                    p4=tuple(prediction["text_region"][2])
+                    p4=tuple(prediction["text_region"][3])
                 ),
                 text=prediction["text"],
                 confidence=prediction["confidence"],
