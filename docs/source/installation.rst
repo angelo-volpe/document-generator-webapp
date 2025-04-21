@@ -37,7 +37,7 @@ repository and run the following commands inside:
 
 Model Services
 --------------
-To deploy the model services, you need to clone the `PaddleOCR <https://github.com/angelo-volpe/PaddleOCR>`_
-repository.
+To deploy the model services you can choose one of the following two:
 
-In the repo follow document_app/README.md instructions to fine tune and deploy the model.
+* `PaddleOCR <https://github.com/angelo-volpe/PaddleOCR>`_ repository, follow document_app/README.md instructions to fine tune and deploy the model.
+* `Faster R-CNN <https://github.com/angelo-volpe/document-generator-text-extractor>`_ repository, follow src/text_detector_model/README.md instructions to fine tune and deploy the model.

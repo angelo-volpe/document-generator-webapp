@@ -18,6 +18,7 @@ class TextRegion:
     def __iter__(self):
         return iter((self.p1, self.p2, self.p3, self.p4))
 
+
 @dataclass
 class PredictedBox:
     text_region: TextRegion
@@ -57,18 +58,18 @@ class PaddleAPIOCRPredictor(OCRPredictor):
 
         predictions = []
         for prediction in res:
-           predicted_box = PredictedBox(
-               text_region=TextRegion(
+            predicted_box = PredictedBox(
+                text_region=TextRegion(
                     p1=tuple(prediction["text_region"][0]),
                     p2=tuple(prediction["text_region"][1]),
                     p3=tuple(prediction["text_region"][2]),
-                    p4=tuple(prediction["text_region"][3])
+                    p4=tuple(prediction["text_region"][3]),
                 ),
                 text=prediction["text"],
                 confidence=prediction["confidence"],
             )
-           
-           predictions.append(predicted_box)
+
+            predictions.append(predicted_box)
 
         return predictions
 
@@ -98,10 +99,7 @@ class FCNNPaddleAPIOCRPredictor(OCRPredictor):
             x1, y1, x2, y2 = prediction["original_box"]
             predicted_box = PredictedBox(
                 text_region=TextRegion(
-                    p1=(x1, y1),
-                    p2=(x2, y1),
-                    p3=(x2, y2),
-                    p4=(x1, y2)
+                    p1=(x1, y1), p2=(x2, y1), p3=(x2, y2), p4=(x1, y2)
                 ),
                 text=prediction["predicted_text"],
                 confidence=prediction["text_score"],

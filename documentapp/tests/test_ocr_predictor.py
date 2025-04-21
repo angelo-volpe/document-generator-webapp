@@ -17,9 +17,15 @@ class TestPaddleAPIOCRPredictor(unittest.TestCase):
 
         mock_response = MagicMock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {"results": [{"text_region": [[0, 0], [1, 0], [1, 1], [0, 1]],
-                                                        "text": "mocked_text", 
-                                                        "confidence": 0.99}]}
+        mock_response.json.return_value = {
+            "results": [
+                {
+                    "text_region": [[0, 0], [1, 0], [1, 1], [0, 1]],
+                    "text": "mocked_text",
+                    "confidence": 0.99,
+                }
+            ]
+        }
         mock_post.return_value = mock_response
 
         result = predictor.predict("mock_image_data")
