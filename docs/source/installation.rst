@@ -1,9 +1,11 @@
 Installation and Run
 ====================
 To install and run Document App, you need to have Docker and Docker Compose installed on your machine.
+The project is composed by variuous services, each one with its own Dockerfile and docker-compose.yml file.
+Here you can find the instructions to run each service.
 
-Frontend
---------
+Frontend + Backend
+------------------
 To deploy the forntend clone the `document-generator-webapp <https://github.com/angelo-volpe/document-generator-webapp>`_ and run the following commands inside the project:
 
 .. code-block:: bash

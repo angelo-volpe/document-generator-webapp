@@ -164,4 +164,8 @@ cython_debug/
 # data
 db.sqlite3
 
+# django media files
 media
+
+# mac files
+*.DS_Store

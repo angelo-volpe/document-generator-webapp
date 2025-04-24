@@ -35,11 +35,38 @@ This page allows you to do various operations on the document:
    :align: center
    :width: 600px
 
+Document Samples Page
+----------------------------
+This page allows you to access the generated samples and view them one by one.
+Here are some examples of the generated samples:
+
+|sample_1| |sample_2| |sample_3|
+
+.. |sample_1| image:: _static/sample_1.png
+   :alt: Sample
+   :width: 30%
+
+.. |sample_2| image:: _static/sample_2.png
+   :alt: Sample
+   :width: 30%
+
+.. |sample_3| image:: _static/sample_3.png
+   :alt: Sample
+   :width: 30%
 
 Document Prediction Page
 ------------------------------
 
 This page allows you to upload a document image and run the fine tuned OCR to predict the content and automatically associate it to the boxes.
+
+Example real document:
+
+.. image:: _static/example_form_real_2.jpg
+   :alt: Real document
+   :align: center
+   :width: 400px
+
+Then you can see the document preprocessed with predicted content and the associated boxes.
 
 .. image:: _static/prediction_page.png
    :alt: Document Prediction Page
