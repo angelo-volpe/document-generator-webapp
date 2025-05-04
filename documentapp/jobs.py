@@ -72,7 +72,7 @@ class AirflowJobs(Jobs):
             raise ValueError("document_id is required for model fine tuning job")
 
         fine_tuning_dag_id = os.environ.get(
-            "MODEL_FINE_TUNING_DAG_ID", "model_training"
+            "MODEL_FINE_TUNING_DAG_ID", "faster_rcnn_fine_tuning"
         )
         conf = {
             "conf": {

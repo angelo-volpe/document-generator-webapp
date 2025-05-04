@@ -9,9 +9,10 @@ import json
 
 from .models import *
 from .logging_config import logger
-from .jobs import JobType, AirflowJobs
+from .jobs import JobType
+from .config import get_job_executor
 
-jobs = AirflowJobs()
+jobs = get_job_executor()
 
 
 ## Jobs API
