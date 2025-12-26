@@ -1,10 +1,11 @@
 import unittest
 from unittest.mock import MagicMock, patch
+
 import numpy as np
 import pandas as pd
 
-from ..ocr_predictor import PredictedBox, TextRegion
 from ..document_processor import DocumentProcessor
+from ..ocr_predictor import PredictedBox, TextRegion
 
 
 class TestDocumentProcessor(unittest.TestCase):

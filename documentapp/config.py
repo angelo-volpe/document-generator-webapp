@@ -1,25 +1,24 @@
 import os
-from .ocr_predictor import PaddleAPIOCRPredictor, FCNNPaddleAPIOCRPredictor
-from .jobs import AirflowJobs
+
+from .jobs import AirflowJobs, Jobs
+from .ocr_predictor import FCNNPaddleAPIOCRPredictor, OCRPredictor, PaddleAPIOCRPredictor
 
 
-def get_ocr_predictor():
+def get_ocr_predictor() -> OCRPredictor:
     """
     Returns the OCR predictor based on the environment variable.
     """
     if os.environ.get("OCR") == "PADDLE_OCR":
         return PaddleAPIOCRPredictor()
-    elif os.environ.get("OCR") == "FCNN_PADDLE_OCR":
+    if os.environ.get("OCR") == "FCNN_PADDLE_OCR":
         return FCNNPaddleAPIOCRPredictor()
-    else:
-        raise ValueError("Invalid OCR predictor specified in environment variables")
+    raise ValueError("Invalid OCR predictor specified in environment variables")
 
 
-def get_job_executor():
+def get_job_executor() -> Jobs:
     """
     Returns the Job executor based on the environment variable.
     """
     if os.environ.get("JOB_EXECUTOR") == "AIRFLOW":
         return AirflowJobs()
-    else:
-        raise ValueError("Invalid Job executor specified in environment variables")
+    raise ValueError("Invalid Job executor specified in environment variables")

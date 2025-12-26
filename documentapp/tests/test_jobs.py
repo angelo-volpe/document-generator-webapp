@@ -1,13 +1,13 @@
+import os
 import unittest
 from unittest.mock import patch
-import os
+
 from requests.exceptions import RequestException
 
 from ..jobs import AirflowJobs
 
 
 class TestAirflowJobs(unittest.TestCase):
-
     @patch("requests.Session.post")
     @patch.dict(
         os.environ,
@@ -29,7 +29,7 @@ class TestAirflowJobs(unittest.TestCase):
         with patch.object(
             job, "_AirflowJobs__run_airflow_job", return_value="1234"
         ) as mock_airflow:
-            run_id = job._run_sampling_job(job_args)
+            job._run_sampling_job(job_args)
             mock_airflow.assert_called_once_with("sample_dag", {"conf": job_args})
 
     @patch("requests.Session.post")
@@ -52,7 +52,7 @@ class TestAirflowJobs(unittest.TestCase):
         with patch.object(
             job, "_AirflowJobs__run_airflow_job", return_value="5678"
         ) as mock_airflow:
-            run_id = job._run_fine_tuning_job(job_args)
+            job._run_fine_tuning_job(job_args)
             mock_airflow.assert_called_once_with("fine_tune_dag", {"conf": job_args})
 
     def test_run_sampling_job_missing_args(self):

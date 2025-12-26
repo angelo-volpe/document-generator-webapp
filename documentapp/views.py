@@ -1,17 +1,20 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from typing import Any
+
+import cv2
+import numpy as np
+from django.db.models import QuerySet
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import ListView
 
-import numpy as np
-import cv2
-
-from .models import *
-from .forms import DocumentForm
-from .document_processor import DocumentProcessor
-from .logging_config import logger
 from .config import get_ocr_predictor
+from .document_processor import DocumentProcessor
+from .forms import DocumentForm
+from .logging_config import logger
+from .models import Box, BoxSerializer, Document, SampleDocument
 
 
-def document_list(request):
+def document_list(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
@@ -28,7 +31,7 @@ def document_list(request):
     )
 
 
-def document_detail(request, document_id):
+def document_detail(request: HttpRequest, document_id: int) -> HttpResponse:
     document = get_object_or_404(Document, pk=document_id)
     boxes = Box.objects.filter(document=document_id)
     return render(
@@ -38,8 +41,8 @@ def document_detail(request, document_id):
     )
 
 
-def document_prediction(request, document_id):
-    context = {"document_id": document_id}
+def document_prediction(request: HttpRequest, document_id: int) -> HttpResponse:
+    context: dict[str, Any] = {"document_id": document_id}
 
     if request.method == "POST" and request.FILES["image"]:
         image = request.FILES["image"]
@@ -67,27 +70,23 @@ def document_prediction(request, document_id):
         predicted_boxes = image_processor.detected_boxes_df.to_dict(orient="records")
         logger.debug(f"predictions: {predicted_boxes}")
 
-        context["base64_document"] = (
-            f"data:image/png;base64,{image_processor.encoded_image}"
-        )
+        context["base64_document"] = f"data:image/png;base64,{image_processor.encoded_image}"
 
         logger.debug(template_boxes)
 
         context["predicted_boxes"] = predicted_boxes
 
-        context["template_boxes"] = list(
-            map(
-                lambda x: {
-                    "coords_norm": [
-                        [x["start_x_norm"], x["start_y_norm"]],
-                        [x["end_x_norm"], x["start_y_norm"]],
-                        [x["end_x_norm"], x["end_y_norm"]],
-                        [x["start_x_norm"], x["end_y_norm"]],
-                    ]
-                },
-                template_boxes,
-            )
-        )
+        context["template_boxes"] = [
+            {
+                "coords_norm": [
+                    [box["start_x_norm"], box["start_y_norm"]],
+                    [box["end_x_norm"], box["start_y_norm"]],
+                    [box["end_x_norm"], box["end_y_norm"]],
+                    [box["start_x_norm"], box["end_y_norm"]],
+                ]
+            }
+            for box in template_boxes
+        ]
 
     return render(request, "documentapp/document_prediction.html", context)
 
@@ -98,7 +97,7 @@ class SampleDocumentListView(ListView):
     context_object_name = "sample_documents"
     paginate_by = 15
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[SampleDocument]:
         queryset = super().get_queryset()
         template_document_id = self.request.GET.get("template_document")
 

@@ -16,7 +16,7 @@ To deploy the forntend clone the `document-generator-webapp <https://github.com/
 
 .. code-block:: bash
 
-    python manage.py makemigrations
+    uv run python manage.py makemigrations
     docker compose exec document_app python manage.py migrate --noinput
 
 Remember that to access all the functionalities you also need to run the job services and model services.

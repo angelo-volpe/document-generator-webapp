@@ -1,6 +1,7 @@
-import unittest
 import os
-from unittest.mock import patch, MagicMock
+import unittest
+from unittest.mock import MagicMock, patch
+
 from ..ocr_predictor import PaddleAPIOCRPredictor
 
 

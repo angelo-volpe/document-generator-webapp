@@ -1,22 +1,31 @@
+import base64
+from itertools import product
+from typing import Any
+
 import cv2
 import numpy as np
-import base64
-from shapely import Polygon
-from itertools import product
+import numpy.typing as npt
 import pandas as pd
+from shapely import Polygon
 
-from .ocr_predictor import OCRPredictor
 from .image_utils import denormalise_box_coordinates, get_box_coords
+from .ocr_predictor import OCRPredictor
 
 
 class DocumentProcessor:
-    def __init__(self, template, document, template_boxes, ocr_predictor: OCRPredictor):
+    def __init__(
+        self,
+        template: npt.NDArray[np.uint8],
+        document: npt.NDArray[np.uint8],
+        template_boxes: list[dict[str, Any]],
+        ocr_predictor: OCRPredictor,
+    ) -> None:
         self.document = document
         self.template = template
         self.template_boxes = template_boxes
         self.ocr_predictor = ocr_predictor
 
-    def __align_images(self):
+    def __align_images(self) -> npt.NDArray[np.uint8]:
         image_gray = cv2.cvtColor(self.document, cv2.COLOR_BGR2GRAY)
         template_gray = cv2.cvtColor(self.template, cv2.COLOR_BGR2GRAY)
 
@@ -48,15 +57,14 @@ class DocumentProcessor:
 
         # Use homography
         height, width = template_gray.shape
-        registered_image = cv2.warpPerspective(self.document, h, (width, height))
 
-        return registered_image
+        return cv2.warpPerspective(self.document, h, (width, height))
 
-    def __tag_boxes(self):
+    def __tag_boxes(self) -> None:
         doc_height, doc_width = self.template.shape[:2]
 
-        template_boxes = map(
-            lambda x: {
+        template_boxes = [
+            {
                 "box_name": x["name"],
                 "box_id": x["id"],
                 "coords": get_box_coords(
@@ -69,9 +77,9 @@ class DocumentProcessor:
                         doc_height,
                     )
                 ),
-            },
-            self.template_boxes,
-        )
+            }
+            for x in self.template_boxes
+        ]
 
         colliding_boxes = []
         for prediction, label_box in product(self.__predictions, template_boxes):
@@ -91,12 +99,9 @@ class DocumentProcessor:
                         "detected_box_text_confidence": prediction.confidence,
                         "intersection_recall": intersection_area / label_area,
                         "intersection_precision": intersection_area / pred_area,
-                        "coords_norm": list(
-                            map(
-                                lambda x: [x[0] / doc_width, x[1] / doc_height],
-                                prediction.text_region,
-                            )
-                        ),
+                        "coords_norm": [
+                            [x[0] / doc_width, x[1] / doc_height] for x in prediction.text_region
+                        ],
                     }
                 )
 
@@ -122,7 +127,7 @@ class DocumentProcessor:
                 ]
             )
 
-    def process_document(self):
+    def process_document(self) -> None:
         registered_image = self.__align_images()
         _, buffer = cv2.imencode(".png", registered_image)
         self.encoded_image = base64.b64encode(buffer).decode("utf8")
@@ -131,4 +136,3 @@ class DocumentProcessor:
 
         # TODO this part can be not necessary or different for some predictors returning classes
         self.__tag_boxes()
-        return

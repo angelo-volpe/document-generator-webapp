@@ -1,43 +1,53 @@
-from rest_framework import viewsets, mixins
+import json
+import traceback
+from typing import Any
+
+from django.http import HttpRequest, JsonResponse
+from django.views.decorators.http import require_http_methods
+from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import status
-from django.http import JsonResponse
 
-import traceback
-import json
-
-from .models import *
-from .logging_config import logger
-from .jobs import JobType
 from .config import get_job_executor
+from .jobs import JobType
+from .logging_config import logger
+from .models import (
+    Box,
+    BoxSerializer,
+    Document,
+    DocumentSerializer,
+    SampleBox,
+    SampleBoxSerializer,
+    SampleDocument,
+    SampleDocumentSerializer,
+)
 
 jobs = get_job_executor()
 
 
 ## Jobs API
-def trigger_sampling_job(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
+@require_http_methods(["POST"])
+def trigger_sampling_job(request: HttpRequest) -> JsonResponse:
+    try:
+        data = json.loads(request.body)
 
-            job_id = jobs.run_job(JobType.SAMPLE_GENERATION, data["job_args"])
+        job_id = jobs.run_job(JobType.SAMPLE_GENERATION, data["job_args"])
 
-            return JsonResponse({"job_id": job_id}, status=200)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
+        return JsonResponse({"job_id": job_id}, status=200)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 
-def trigger_model_fine_tuning_job(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
+@require_http_methods(["POST"])
+def trigger_model_fine_tuning_job(request: HttpRequest) -> JsonResponse:
+    try:
+        data = json.loads(request.body)
 
-            job_id = jobs.run_job(JobType.MODEL_FINE_TUNING, data["job_args"])
+        job_id = jobs.run_job(JobType.MODEL_FINE_TUNING, data["job_args"])
 
-            return JsonResponse({"job_id": job_id}, status=200)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
+        return JsonResponse({"job_id": job_id}, status=200)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 ### REST API
@@ -53,33 +63,27 @@ class BoxViewSet(
     lookup_field = "id"
 
 
-class DocumentViewSet(
-    viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.DestroyModelMixin
-):
+class DocumentViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.DestroyModelMixin):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
     lookup_field = "id"
 
     @action(detail=True, methods=["get"])
-    def get_samples(self, request, id=None):
+    def get_samples(self, request: HttpRequest, id: int | None = None) -> Response:
         try:
             document = self.get_object()
         except Document.DoesNotExist:
-            return Response(
-                {"error": "Document not found."}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Document not found."}, status=status.HTTP_404_NOT_FOUND)
         samples = document.samples.all()
         serializer = SampleDocumentSerializer(samples, many=True)
         return Response(serializer.data)
 
     @action(detail=True, methods=["get"])
-    def get_boxes(self, request, id=None):
+    def get_boxes(self, request: HttpRequest, id: int | None = None) -> Response:
         try:
             document = self.get_object()
         except Document.DoesNotExist:
-            return Response(
-                {"error": "Document not found."}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Document not found."}, status=status.HTTP_404_NOT_FOUND)
         boxes = document.box.all()
         serializer = BoxSerializer(boxes, many=True)
         return Response(serializer.data)
@@ -93,13 +97,11 @@ class SampleDocumentViewSet(
     lookup_field = "id"
 
     @action(detail=False, methods=["delete"])
-    def delete_template_samples(self, request):
+    def delete_template_samples(self, request: HttpRequest) -> Response:
         try:
             template_document = request.query_params.get("template_document")
 
-            related_documents = SampleDocument.objects.filter(
-                template_document=template_document
-            )
+            related_documents = SampleDocument.objects.filter(template_document=template_document)
             deleted_count = related_documents.delete()
 
             return Response(
@@ -113,7 +115,7 @@ class SampleDocumentViewSet(
             )
 
     @action(detail=True, methods=["get"])
-    def get_boxes(self, request, id=None):
+    def get_boxes(self, request: HttpRequest, id: int | None = None) -> Response:
         try:
             sample_document = self.get_object()
         except SampleDocument.DoesNotExist:
@@ -135,11 +137,11 @@ class SampleBoxViewSet(
     lookup_field = "id"
 
     @action(detail=False, methods=["post"])
-    def create_sample_boxes(self, request):
+    def create_sample_boxes(self, request: HttpRequest) -> Response:
         try:
             data = request.data
             sample_document_id = data.get("sample_document_id")
-            boxes = data.get("boxes", [])
+            boxes: list[dict[str, Any]] = data.get("boxes", [])
 
             for box in boxes:
                 template_box_id = box.pop("template_box_id")
@@ -159,6 +161,4 @@ class SampleBoxViewSet(
             )
         except Exception as e:
             logger.error(traceback.format_exc())
-            return Response(
-                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

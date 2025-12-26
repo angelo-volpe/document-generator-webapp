@@ -1,21 +1,23 @@
-from abc import ABC, abstractmethod
-import os
-import requests
 import json
+import os
+from abc import ABC, abstractmethod
+from collections.abc import Iterator
 from dataclasses import dataclass
-from typing import List, Tuple
+from typing import Any
+
+import requests
 
 from .logging_config import logger
 
 
 @dataclass
 class TextRegion:
-    p1: Tuple[int, int]
-    p2: Tuple[int, int]
-    p3: Tuple[int, int]
-    p4: Tuple[int, int]
+    p1: tuple[int, int]
+    p2: tuple[int, int]
+    p3: tuple[int, int]
+    p4: tuple[int, int]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[tuple[int, int]]:
         return iter((self.p1, self.p2, self.p3, self.p4))
 
 
@@ -28,20 +30,19 @@ class PredictedBox:
 
 class OCRPredictor(ABC):
     @abstractmethod
-    def predict(self, encoded_image) -> List[PredictedBox]:
+    def predict(self, encoded_image: str) -> list[PredictedBox]:
         """
         Predicts the text boxes in the given image.
         :param encoded_image: The image to predict text boxes for, encoded in base64.
         :return: A list of predicted boxes, each containing the coordinates of the box and the predicted text.
         """
-        pass
 
 
 class PaddleAPIOCRPredictor(OCRPredictor):
-    def __init__(self):
-        self.api_url = f"{os.environ.get("PADDLE_OCR_HOST")}/predict/ocr_system"
+    def __init__(self) -> None:
+        self.api_url = f"{os.environ.get('PADDLE_OCR_HOST')}/predict/ocr_system"
 
-    def predict(self, encoded_image) -> List[PredictedBox]:
+    def predict(self, encoded_image: str) -> list[PredictedBox]:
         data = {"images": [encoded_image]}
         logger.debug(f"making request to {self.api_url}")
         with requests.Session() as session:
@@ -54,9 +55,9 @@ class PaddleAPIOCRPredictor(OCRPredictor):
         if response.status_code != 200:
             logger.error("model prediction failed")
 
-        res = response.json()["results"]
+        res: list[dict[str, Any]] = response.json()["results"]
 
-        predictions = []
+        predictions: list[PredictedBox] = []
         for prediction in res:
             predicted_box = PredictedBox(
                 text_region=TextRegion(
@@ -75,11 +76,11 @@ class PaddleAPIOCRPredictor(OCRPredictor):
 
 
 class FCNNPaddleAPIOCRPredictor(OCRPredictor):
-    def __init__(self):
-        self.api_url = f"{os.environ.get("FCNN_PADDLE_OCR_HOST")}/predict"
+    def __init__(self) -> None:
+        self.api_url = f"{os.environ.get('FCNN_PADDLE_OCR_HOST')}/predict"
 
     # TODO Can be refactored by implementing a common method for API call in like APIOCRPredictor class
-    def predict(self, encoded_image) -> List[PredictedBox]:
+    def predict(self, encoded_image: str) -> list[PredictedBox]:
         data = {"image": encoded_image}
         logger.debug(f"making request to {self.api_url}")
         with requests.Session() as session:
@@ -92,15 +93,13 @@ class FCNNPaddleAPIOCRPredictor(OCRPredictor):
         if response.status_code != 200:
             logger.error("model prediction failed")
 
-        res = response.json()["predictions"]
+        res: list[dict[str, Any]] = response.json()["predictions"]
 
-        predictions = []
+        predictions: list[PredictedBox] = []
         for prediction in res:
             x1, y1, x2, y2 = prediction["original_box"]
             predicted_box = PredictedBox(
-                text_region=TextRegion(
-                    p1=(x1, y1), p2=(x2, y1), p3=(x2, y2), p4=(x1, y2)
-                ),
+                text_region=TextRegion(p1=(x1, y1), p2=(x2, y1), p3=(x2, y2), p4=(x1, y2)),
                 text=prediction["predicted_text"],
                 confidence=prediction["text_score"],
             )

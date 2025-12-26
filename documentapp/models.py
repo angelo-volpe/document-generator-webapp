@@ -6,7 +6,7 @@ class Document(models.Model):
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to="images/")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
@@ -27,7 +27,7 @@ class Box(models.Model):
     end_x_norm = models.FloatField()
     end_y_norm = models.FloatField()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Box for {self.document.name} with name: {self.name} at ({self.start_x}, {self.start_y}), ({self.end_x}, {self.end_y})"
 
 
@@ -44,7 +44,7 @@ class SampleDocument(models.Model):
         Document, on_delete=models.CASCADE, related_name="samples"
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
@@ -58,15 +58,16 @@ class SampleBox(models.Model):
     sample_document = models.ForeignKey(
         SampleDocument, on_delete=models.CASCADE, related_name="sample_box"
     )
-    template_box = models.ForeignKey(
-        Box, on_delete=models.CASCADE, related_name="sample_box"
-    )
+    template_box = models.ForeignKey(Box, on_delete=models.CASCADE, related_name="sample_box")
     name = models.CharField(max_length=100)
     label = models.CharField(max_length=100)
     start_x_norm = models.FloatField()
     start_y_norm = models.FloatField()
     end_x_norm = models.FloatField()
     end_y_norm = models.FloatField()
+
+    def __str__(self) -> str:
+        return f"SampleBox for {self.sample_document.name} linked to template box {self.template_box.name}"
 
 
 class SampleBoxSerializer(serializers.ModelSerializer):

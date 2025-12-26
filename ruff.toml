@@ -1,0 +1,18 @@
+line-length = 100
+exclude = ["**/migrations/**"]
+
+[format]
+docstring-code-format = true
+# skip-magic-trailing-comma = true
+
+[lint]
+# Adds isort linting
+extend-select = ["I"]
+# Don't autoremove unused imports, variable, etc.
+unfixable = ["F401"]
+# A file or directory to exclude from linting
+exclude = ["scratchpad.py"]
+
+[lint.pydocstyle]
+# Or "numpy" for example
+convention = "google"
