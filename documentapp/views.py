@@ -55,7 +55,7 @@ def document_prediction(request: HttpRequest, document_id: int) -> HttpResponse:
         template_path = template_obj.image.path
         template_image = cv2.imread(template_path, cv2.IMREAD_COLOR)
 
-        template_boxes = Box.objects.filter(document=document_id)
+        template_boxes: QuerySet[Box, Box] = Box.objects.filter(document=document_id)
 
         image_processor = DocumentProcessor(
             template_image,

@@ -66,20 +66,20 @@ class DocumentProcessor:
 
         template_boxes = [
             {
-                "box_name": x.name,
-                "box_id": x.pk,
+                "box_name": box.name,
+                "box_id": box.pk,
                 "coords": get_box_coords(
                     *denormalise_box_coordinates(
-                        x.start_x_norm,
-                        x.start_y_norm,
-                        x.end_x_norm,
-                        x.end_y_norm,
+                        box.start_x_norm,
+                        box.start_y_norm,
+                        box.end_x_norm,
+                        box.end_y_norm,
                         doc_width,
                         doc_height,
                     )
                 ),
             }
-            for x in self.template_boxes
+            for box in self.template_boxes
         ]
 
         colliding_boxes = []

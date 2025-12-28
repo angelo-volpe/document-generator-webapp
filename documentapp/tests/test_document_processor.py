@@ -12,16 +12,19 @@ class TestDocumentProcessor(unittest.TestCase):
     def setUp(self):
         self.template = np.zeros((100, 100, 3), dtype=np.uint8)
         self.document = np.zeros((100, 100, 3), dtype=np.uint8)
-        self.template_boxes = [
-            {
-                "name": "box1",
-                "id": 1,
-                "start_x_norm": 0.1,
-                "start_y_norm": 0.1,
-                "end_x_norm": 0.5,
-                "end_y_norm": 0.5,
-            }
-        ]
+
+        # Create a mock Box object
+        mock_box = MagicMock()
+        mock_box.name = "box1"
+        mock_box.pk = 1
+        mock_box.start_x_norm = 0.1
+        mock_box.start_y_norm = 0.1
+        mock_box.end_x_norm = 0.5
+        mock_box.end_y_norm = 0.5
+
+        # Create a mock QuerySet
+        self.template_boxes = MagicMock()
+        self.template_boxes.__iter__ = MagicMock(return_value=iter([mock_box]))
         self.ocr_predictor = MagicMock()
         self.ocr_predictor.predict.return_value = [
             PredictedBox(
