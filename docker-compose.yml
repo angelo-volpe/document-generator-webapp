@@ -24,7 +24,7 @@ services:
       POSTGRES_USER: document_app_user
       POSTGRES_PASSWORD: document_app_password
       POSTGRES_DB: document_app_db
-    healthcheck:                                                                 
+    healthcheck:
       test: ["CMD-SHELL", "pg_isready -d document_app_db -U document_app_user"]
       interval: 2s
       timeout: 30s

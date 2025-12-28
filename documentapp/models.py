@@ -1,10 +1,12 @@
+from typing import ClassVar
+
 from django.db import models
 from rest_framework import serializers
 
 
 class Document(models.Model):
-    name = models.CharField(max_length=100)
-    image = models.ImageField(upload_to="images/")
+    name: ClassVar[models.CharField] = models.CharField(max_length=100)
+    image: ClassVar[models.ImageField] = models.ImageField(upload_to="images/")
 
     def __str__(self) -> str:
         return self.name
@@ -17,18 +19,20 @@ class DocumentSerializer(serializers.ModelSerializer):
 
 
 class Box(models.Model):
-    document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name="box")
-    name = models.CharField(max_length=100)
-    is_alphabetic = models.BooleanField(default=False)
-    is_numeric = models.BooleanField(default=False)
-    mean_length = models.IntegerField(default=0)
-    start_x_norm = models.FloatField()
-    start_y_norm = models.FloatField()
-    end_x_norm = models.FloatField()
-    end_y_norm = models.FloatField()
+    document: ClassVar[models.ForeignKey] = models.ForeignKey(
+        Document, on_delete=models.CASCADE, related_name="box"
+    )
+    name: ClassVar[models.CharField] = models.CharField(max_length=100)
+    is_alphabetic: ClassVar[models.BooleanField] = models.BooleanField(default=False)
+    is_numeric: ClassVar[models.BooleanField] = models.BooleanField(default=False)
+    mean_length: ClassVar[models.IntegerField] = models.IntegerField(default=0)
+    start_x_norm: ClassVar[models.FloatField] = models.FloatField()
+    start_y_norm: ClassVar[models.FloatField] = models.FloatField()
+    end_x_norm: ClassVar[models.FloatField] = models.FloatField()
+    end_y_norm: ClassVar[models.FloatField] = models.FloatField()
 
     def __str__(self) -> str:
-        return f"Box for {self.document.name} with name: {self.name} at ({self.start_x}, {self.start_y}), ({self.end_x}, {self.end_y})"
+        return f"Box for {self.document.name} with name: {self.name} at ({self.start_x_norm}, {self.start_y_norm}), ({self.end_x_norm}, {self.end_y_norm})"  # type: ignore[attr-defined]
 
 
 class BoxSerializer(serializers.ModelSerializer):
@@ -38,9 +42,9 @@ class BoxSerializer(serializers.ModelSerializer):
 
 
 class SampleDocument(models.Model):
-    name = models.CharField(max_length=100)
-    image = models.ImageField(upload_to="document_samples/")
-    template_document = models.ForeignKey(
+    name: ClassVar[models.CharField] = models.CharField(max_length=100)
+    image: ClassVar[models.ImageField] = models.ImageField(upload_to="document_samples/")
+    template_document: ClassVar[models.ForeignKey] = models.ForeignKey(
         Document, on_delete=models.CASCADE, related_name="samples"
     )
 
@@ -55,19 +59,21 @@ class SampleDocumentSerializer(serializers.ModelSerializer):
 
 
 class SampleBox(models.Model):
-    sample_document = models.ForeignKey(
+    sample_document: ClassVar[models.ForeignKey] = models.ForeignKey(
         SampleDocument, on_delete=models.CASCADE, related_name="sample_box"
     )
-    template_box = models.ForeignKey(Box, on_delete=models.CASCADE, related_name="sample_box")
-    name = models.CharField(max_length=100)
-    label = models.CharField(max_length=100)
-    start_x_norm = models.FloatField()
-    start_y_norm = models.FloatField()
-    end_x_norm = models.FloatField()
-    end_y_norm = models.FloatField()
+    template_box: ClassVar[models.ForeignKey] = models.ForeignKey(
+        Box, on_delete=models.CASCADE, related_name="sample_box"
+    )
+    name: ClassVar[models.CharField] = models.CharField(max_length=100)
+    label: ClassVar[models.CharField] = models.CharField(max_length=100)
+    start_x_norm: ClassVar[models.FloatField] = models.FloatField()
+    start_y_norm: ClassVar[models.FloatField] = models.FloatField()
+    end_x_norm: ClassVar[models.FloatField] = models.FloatField()
+    end_y_norm: ClassVar[models.FloatField] = models.FloatField()
 
     def __str__(self) -> str:
-        return f"SampleBox for {self.sample_document.name} linked to template box {self.template_box.name}"
+        return f"SampleBox for {self.sample_document.name} linked to template box {self.template_box.name}"  # type: ignore[attr-defined]
 
 
 class SampleBoxSerializer(serializers.ModelSerializer):

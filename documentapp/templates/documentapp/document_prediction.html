@@ -53,7 +53,7 @@
                             const container = document.getElementById('document-container');
                             docWidth = container.clientWidth;
                             docHeight = container.clientHeight;
-                            
+
                             predictions.forEach(prediction => {
                                 // Create SVG element
                                 const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -63,22 +63,22 @@
                                 svg.style.width = '100%';
                                 svg.style.height = '100%';
                                 svg.style.pointerEvents = 'none';
-                                
+
                                 // Create polygon with the coordinates
                                 const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-                                
+
                                 // Format points for SVG polygon
-                                const points = prediction.coords_norm.map(point => 
+                                const points = prediction.coords_norm.map(point =>
                                     `${parseInt(point[0] * docWidth)},${parseInt(point[1] * docHeight)}`).join(' ');
                                 console.log(points);
                                 polygon.setAttribute('points', points);
                                 polygon.style.fill = 'transparent';
                                 polygon.style.stroke = color;
                                 polygon.style.strokeWidth = '2';
-                                
+
                                 // Append polygon to SVG
                                 svg.appendChild(polygon);
-                                
+
                                 // Append SVG to container
                                 container.appendChild(svg);
                             });
@@ -114,7 +114,7 @@
             {% endif %}
         </div>
     <a class="btn btn-primary btn-sm" href="{% url 'documentapp:document_detail' document_id %}">Back</a>
-    
+
     <div class="modal fade" id="new-document-modal" tabindex="-1" aria-labelledby="new-document" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">

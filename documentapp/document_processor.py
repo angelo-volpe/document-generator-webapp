@@ -1,14 +1,15 @@
 import base64
 from itertools import product
-from typing import Any
 
 import cv2
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
+from django.db.models import QuerySet
 from shapely import Polygon
 
 from .image_utils import denormalise_box_coordinates, get_box_coords
+from .models import Box
 from .ocr_predictor import OCRPredictor
 
 
@@ -17,7 +18,7 @@ class DocumentProcessor:
         self,
         template: npt.NDArray[np.uint8],
         document: npt.NDArray[np.uint8],
-        template_boxes: list[dict[str, Any]],
+        template_boxes: QuerySet[Box, Box],
         ocr_predictor: OCRPredictor,
     ) -> None:
         self.document = document
@@ -65,14 +66,14 @@ class DocumentProcessor:
 
         template_boxes = [
             {
-                "box_name": x["name"],
-                "box_id": x["id"],
+                "box_name": x.name,
+                "box_id": x.pk,
                 "coords": get_box_coords(
                     *denormalise_box_coordinates(
-                        x["start_x_norm"],
-                        x["start_y_norm"],
-                        x["end_x_norm"],
-                        x["end_y_norm"],
+                        x.start_x_norm,
+                        x.start_y_norm,
+                        x.end_x_norm,
+                        x.end_y_norm,
                         doc_width,
                         doc_height,
                     )

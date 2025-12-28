@@ -11,7 +11,7 @@ from .config import get_ocr_predictor
 from .document_processor import DocumentProcessor
 from .forms import DocumentForm
 from .logging_config import logger
-from .models import Box, BoxSerializer, Document, SampleDocument
+from .models import Box, Document, SampleDocument
 
 
 def document_list(request: HttpRequest) -> HttpResponse:
@@ -46,7 +46,7 @@ def document_prediction(request: HttpRequest, document_id: int) -> HttpResponse:
 
     if request.method == "POST" and request.FILES["image"]:
         image = request.FILES["image"]
-        image_data = image.read()
+        image_data = image.read()  # type: ignore[union-attr]
 
         image_array = np.frombuffer(image_data, np.uint8)
         uploaded_image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
@@ -56,7 +56,6 @@ def document_prediction(request: HttpRequest, document_id: int) -> HttpResponse:
         template_image = cv2.imread(template_path, cv2.IMREAD_COLOR)
 
         template_boxes = Box.objects.filter(document=document_id)
-        template_boxes = BoxSerializer(template_boxes, many=True).data
 
         image_processor = DocumentProcessor(
             template_image,
@@ -79,10 +78,10 @@ def document_prediction(request: HttpRequest, document_id: int) -> HttpResponse:
         context["template_boxes"] = [
             {
                 "coords_norm": [
-                    [box["start_x_norm"], box["start_y_norm"]],
-                    [box["end_x_norm"], box["start_y_norm"]],
-                    [box["end_x_norm"], box["end_y_norm"]],
-                    [box["start_x_norm"], box["end_y_norm"]],
+                    [box.start_x_norm, box.start_y_norm],
+                    [box.end_x_norm, box.start_y_norm],
+                    [box.end_x_norm, box.end_y_norm],
+                    [box.start_x_norm, box.end_y_norm],
                 ]
             }
             for box in template_boxes

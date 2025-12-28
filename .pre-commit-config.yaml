@@ -1,0 +1,35 @@
+default_install_hook_types:
+  - pre-commit
+
+repos:
+  # General purpose hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-yaml
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: detect-private-key
+
+  # Python linting and formatting
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.4
+    hooks:
+      - id: ruff-check
+        args: ['--fix']
+      - id: ruff-format
+
+  # Type checking
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.14.0
+    hooks:
+      - id: mypy
+        files: ^documentapp/
+        exclude: (migrations|tests)/
+        additional_dependencies:
+          - django-stubs
+          - djangorestframework-stubs
+          - types-requests
+        args: ['--ignore-missing-imports', '--check-untyped-defs']

@@ -24,11 +24,11 @@ Remember that to access all the functionalities you also need to run the job ser
 Job Services
 ------------
 
-To deploy the job services, you need to clone the `document-generator-jobs <https://github.com/angelo-volpe/document-generator-jobs>`_ 
+To deploy the job services, you need to clone the `document-generator-jobs <https://github.com/angelo-volpe/document-generator-jobs>`_
 repository and run the following commands inside:
 
 .. code-block:: bash
-    
+
     # Build the docker image for jobs
     docker build . -t document-generator-jobs:latest
 

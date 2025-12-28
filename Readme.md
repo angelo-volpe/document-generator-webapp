@@ -23,18 +23,12 @@ uv run coverage run manage.py test
 uv run coverage report -m
 ```
 
-### Code Style
+### Pre-commit
 
-#### Linting
-```
-# Check for issues
-uv run ruff check
+Runs:
+- ruff for linting and formatting
+- mypy for tpye checking
 
-# Auto-fix issues
-uv run ruff check --fix
 ```
-
-#### Formatting
-```
-uv run ruff format
+uv run pre-commit run --all-files
 ```

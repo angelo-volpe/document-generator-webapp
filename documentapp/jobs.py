@@ -33,9 +33,11 @@ class Jobs(ABC):
 class AirflowJobs(Jobs):
     def __init__(self) -> None:
         super().__init__()
-        self.airflow_api_url = os.environ.get("AIRFLOW_API_URL")
-        self.airflow_user = os.environ.get("AIRFLOW_USER")
-        self.airflow_password = os.environ.get("AIRFLOW_PASSWORD")
+        self.airflow_api_url = os.environ.get(
+            "AIRFLOW_API_URL", "http://localhost:8080/api/v1/dags"
+        )
+        self.airflow_user = os.environ.get("AIRFLOW_USER", "airflow")
+        self.airflow_password = os.environ.get("AIRFLOW_PASSWORD", "airflow")
 
     def __run_airflow_job(self, dag_id: str, conf: dict[str, dict[str, int | None]]) -> str:
         url = f"{self.airflow_api_url}/{dag_id}/dagRuns"

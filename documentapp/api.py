@@ -6,6 +6,7 @@ from django.http import HttpRequest, JsonResponse
 from django.views.decorators.http import require_http_methods
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from .config import get_job_executor
@@ -69,7 +70,7 @@ class DocumentViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins
     lookup_field = "id"
 
     @action(detail=True, methods=["get"])
-    def get_samples(self, request: HttpRequest, id: int | None = None) -> Response:
+    def get_samples(self, request: Request, id: int | None = None) -> Response:
         try:
             document = self.get_object()
         except Document.DoesNotExist:
@@ -79,7 +80,7 @@ class DocumentViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins
         return Response(serializer.data)
 
     @action(detail=True, methods=["get"])
-    def get_boxes(self, request: HttpRequest, id: int | None = None) -> Response:
+    def get_boxes(self, request: Request, id: int | None = None) -> Response:
         try:
             document = self.get_object()
         except Document.DoesNotExist:
@@ -97,7 +98,7 @@ class SampleDocumentViewSet(
     lookup_field = "id"
 
     @action(detail=False, methods=["delete"])
-    def delete_template_samples(self, request: HttpRequest) -> Response:
+    def delete_template_samples(self, request: Request) -> Response:
         try:
             template_document = request.query_params.get("template_document")
 
@@ -115,7 +116,7 @@ class SampleDocumentViewSet(
             )
 
     @action(detail=True, methods=["get"])
-    def get_boxes(self, request: HttpRequest, id: int | None = None) -> Response:
+    def get_boxes(self, request: Request, id: int | None = None) -> Response:
         try:
             sample_document = self.get_object()
         except SampleDocument.DoesNotExist:
@@ -137,7 +138,7 @@ class SampleBoxViewSet(
     lookup_field = "id"
 
     @action(detail=False, methods=["post"])
-    def create_sample_boxes(self, request: HttpRequest) -> Response:
+    def create_sample_boxes(self, request: Request) -> Response:
         try:
             data = request.data
             sample_document_id = data.get("sample_document_id")
