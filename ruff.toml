@@ -1,13 +1,17 @@
 line-length = 100
-exclude = ["**/migrations/**"]
+exclude = ["documentapp/migrations/**", "documentapp/tests/**"]
 
 [format]
 docstring-code-format = true
 # skip-magic-trailing-comma = true
 
 [lint]
-# Adds isort linting
-extend-select = ["I"]
+# Adds isort linting and type annotation checks
+extend-select = [
+    "I",      # isort
+    "ANN",    # flake8-annotations - check for missing type annotations
+    "UP",     # pyupgrade - modernize Python code
+]
 # Don't autoremove unused imports, variable, etc.
 unfixable = ["F401"]
 # A file or directory to exclude from linting
