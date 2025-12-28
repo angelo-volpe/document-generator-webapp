@@ -18,9 +18,7 @@ http://localhost:8000/document_app/
 
 ### Run tests
 ```
-uv sync
-uv run coverage run manage.py test
-uv run coverage report -m
+uv run coverage run manage.py test && uv run coverage report -m
 ```
 
 ### Pre-commit
